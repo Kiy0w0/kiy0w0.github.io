@@ -101,29 +101,7 @@ background-color: #0d1b2a;
 - ♿ **Accessibility**: WCAG compliant
 
 ## 🚀 Upcoming Features
-
-[ ] 🎨 **Visual Enhancements**
-[ ] 🎵 **Audio Improvements**
-[ ]📱 **Content Expansion**
-[ ] 🌟 **Advanced Features**
-[ ] 🔧 **Technical Upgrades**
-[ ] 🎯 **Planned Milestones**
-
-**Version 2.0** *(Coming Soon)*
-- Theme switcher implementation
-- Mini-games integration
-- Enhanced audio features
-
-**Version 2.5** *(Q2 2025)*
-- Portfolio showcase
-- Contact system
-- PWA functionality
-
-**Version 3.0** *(Q3 2025)*
-- Full CMS integration
-- Advanced analytics
-- Multi-language support
-
+SOON ??
 ---
 
 *Want to contribute to any of these features? Check out our [contributing guidelines](#🤝-contributing) below!*
