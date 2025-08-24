@@ -7,12 +7,12 @@
 ![GitHub Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-[![Website Status](https://img.shields.io/website?down_color=red&down_message=offline&style=flat-square&up_color=green&up_message=online&url=https%3A%2F%kiy0w0.github.io/simpleweb)](https://kiy0w0.github.io/simpleweb)
-[![GitHub repo size](https://img.shields.io/github/repo-size/kiy0w0/simpleweb?style=flat-square)](https://github.com/kiy0w0/simpleweb)
+[![Website Status](https://img.shields.io/website?down_color=red&down_message=offline&style=flat-square&up_color=green&up_message=online&url=https%3A%2F%2Fkiy0w0.github.io)](https://kiy0w0.github.io)
+[![GitHub repo size](https://img.shields.io/github/repo-size/Kiy0w0/kiy0w0.github.io?style=flat-square)](https://github.com/Kiy0w0/kiy0w0.github.io)
 
 **A beautiful minimalist website featuring a centered image on an elegant black background**
 
-[🚀 Live Demo](https://kiy0w0.github.io/simpleweb) • [📝 Documentation](#documentation) • [🐛 Report Bug](https://github.com/kiy0w0/simpleweb/issues)
+[🚀 Live Demo](https://kiy0w0.github.io) • [📝 Documentation](#documentation) • [🐛 Report Bug](https://github.com/Kiy0w0/kiy0w0.github.io/issues)
 
 </div>
 
