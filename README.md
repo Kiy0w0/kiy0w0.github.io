@@ -24,7 +24,6 @@
 - 📱 **Fully Responsive** - Works perfectly on all devices and screen sizes
 - ⚡ **Fast Loading** - Lightweight and optimized for speed
 - 🎭 **Floating Particles** - Beautiful animated particles in background
-- 🎵 **Background Music** - Ambient music with volume controls
 - 🖱️ **Custom Cursor** - Interactive circle cursor with hover effects
 - 🔧 **Easy to Customize** - Simple structure for quick modifications
 - 🌐 **GitHub Pages Ready** - Deploy instantly with GitHub Pages
@@ -39,12 +38,12 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/kiy0w0/simpleweb.git
+   git clone https://github.com/kiy0w0/kiy0w0.github.io.git
    ```
 
 2. **Navigate to project directory**
    ```bash
-   cd repository-name
+   cd kiy0w0.github.io
    ```
 
 3. **Open in browser**
