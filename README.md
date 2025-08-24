@@ -7,12 +7,12 @@
 ![GitHub Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-[![Website Status](https://img.shields.io/website?down_color=red&down_message=offline&style=flat-square&up_color=green&up_message=online&url=https%3A%2F%2Fyourusername.github.io)](https://yourusername.github.io)
-[![GitHub repo size](https://img.shields.io/github/repo-size/yourusername/repository-name?style=flat-square)](https://github.com/yourusername/repository-name)
+[![Website Status](https://img.shields.io/website?down_color=red&down_message=offline&style=flat-square&up_color=green&up_message=online&url=https%3A%2F%kiy0w0.github.io/simpleweb)](https://kiy0w0.github.io/simpleweb)
+[![GitHub repo size](https://img.shields.io/github/repo-size/kiy0w0/simpleweb?style=flat-square)](https://github.com/kiy0w0/simpleweb)
 
 **A beautiful minimalist website featuring a centered image on an elegant black background**
 
-[🚀 Live Demo](https://yourusername.github.io/repository-name) • [📝 Documentation](#documentation) • [🐛 Report Bug](https://github.com/yourusername/repository-name/issues)
+[🚀 Live Demo](https://kiy0w0.github.io/simpleweb) • [📝 Documentation](#documentation) • [🐛 Report Bug](https://github.com/kiy0w0/simpleweb/issues)
 
 </div>
 
@@ -23,23 +23,11 @@
 - 🎨 **Minimalist Design** - Clean black background with centered image
 - 📱 **Fully Responsive** - Works perfectly on all devices and screen sizes
 - ⚡ **Fast Loading** - Lightweight and optimized for speed
-- 🎭 **Smooth Animations** - Subtle hover effects for better user experience
+- 🎭 **Floating Particles** - Beautiful animated particles in background
+- 🎵 **Background Music** - Ambient music with volume controls
+- 🖱️ **Custom Cursor** - Interactive circle cursor with hover effects
 - 🔧 **Easy to Customize** - Simple structure for quick modifications
 - 🌐 **GitHub Pages Ready** - Deploy instantly with GitHub Pages
-
-## 🏗️ Project Structure
-
-```
-📦 Simple Website
-├── 📄 index.html              # Main HTML file
-├── 📁 public/
-│   └── 📁 css/
-│       └── 🎨 style.css       # Styling and animations
-├── 📁 naeileumalgeum/
-│   └── 🖼️ harin.png           # Featured image asset
-├── 📋 README.md               # Project documentation
-└── 📜 LICENSE                 # MIT License
-```
 
 ## 🚀 Quick Start
 
@@ -101,8 +89,10 @@ background-color: #0d1b2a;
 
 ## 🛠️ Technologies Used
 
-- **HTML5** - Semantic markup
-- **CSS3** - Modern styling with Flexbox
+- **HTML5** - Semantic markup and audio integration
+- **CSS3** - Advanced animations, glassmorphism, and custom cursor
+- **JavaScript** - Interactive music controls and cursor functionality
+- **GitHub Pages** - Free hosting solution
 
 ## 📊 Performance
 
@@ -111,14 +101,42 @@ background-color: #0d1b2a;
 - 🎯 **SEO Optimized**: Meta tags included
 - ♿ **Accessibility**: WCAG compliant
 
+## 🚀 Upcoming Features
+
+[ ] 🎨 **Visual Enhancements**
+[ ] 🎵 **Audio Improvements**
+[ ]📱 **Content Expansion**
+[ ] 🌟 **Advanced Features**
+[ ] 🔧 **Technical Upgrades**
+[ ] 🎯 **Planned Milestones**
+
+**Version 2.0** *(Coming Soon)*
+- Theme switcher implementation
+- Mini-games integration
+- Enhanced audio features
+
+**Version 2.5** *(Q2 2025)*
+- Portfolio showcase
+- Contact system
+- PWA functionality
+
+**Version 3.0** *(Q3 2025)*
+- Full CMS integration
+- Advanced analytics
+- Multi-language support
+
+---
+
+*Want to contribute to any of these features? Check out our [contributing guidelines](#🤝-contributing) below!*
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b what to do?`)
+3. Commit your changes (`git commit -m 'Add some Features'`)
+4. Push to the branch (`git push origin Kiy0w0`)
 5. Open a Pull Request
 
 ## 📄 License
