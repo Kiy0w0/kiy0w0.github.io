@@ -17,17 +17,6 @@
 </div>
 
 ---
-
-## ✨ Features
-
-- 🎨 **Minimalist Design** - Clean black background with centered image
-- 📱 **Fully Responsive** - Works perfectly on all devices and screen sizes
-- ⚡ **Fast Loading** - Lightweight and optimized for speed
-- 🎭 **Floating Particles** - Beautiful animated particles in background
-- 🖱️ **Custom Cursor** - Interactive circle cursor with hover effects
-- 🔧 **Easy to Customize** - Simple structure for quick modifications
-- 🌐 **GitHub Pages Ready** - Deploy instantly with GitHub Pages
-
 ## 🚀 Quick Start
 
 ### Prerequisites
