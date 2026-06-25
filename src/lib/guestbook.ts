@@ -52,6 +52,6 @@ export async function likeEntry(id: string): Promise<number | null> {
 }
 
 export async function setOwnerLiked(id: string, liked: boolean): Promise<boolean> {
-  const { error } = await gb.from("guestbook").update({ owner_liked: liked }).eq("id", id);
+  const { error } = await gb.rpc("set_owner_liked", { entry_id: id, liked });
   return !error;
 }
