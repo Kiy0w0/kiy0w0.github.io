@@ -8,4 +8,10 @@ if (!url || !key) {
   console.warn("Supabase env vars missing: set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY");
 }
 
-export const supabase = createClient(url ?? "", key ?? "");
+// Fall back to a syntactically valid placeholder so createClient never throws
+// at import time (which would blank the whole app). Calls just fail and pages
+// show their error states instead. Real fix is setting the env vars.
+export const supabase = createClient(
+  url || "https://placeholder.supabase.co",
+  key || "placeholder-anon-key",
+);

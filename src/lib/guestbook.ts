@@ -10,7 +10,10 @@ if (!url || !key) {
     "Guestbook env vars missing: set VITE_GUESTBOOK_SUPABASE_URL and VITE_GUESTBOOK_SUPABASE_ANON_KEY",
   );
 }
-const gb = createClient(url ?? "", key ?? "");
+const gb = createClient(
+  url || "https://placeholder.supabase.co",
+  key || "placeholder-anon-key",
+);
 
 export type Entry = {
   id: string;
