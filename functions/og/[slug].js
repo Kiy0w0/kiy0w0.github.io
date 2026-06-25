@@ -1,3 +1,4 @@
+import "./_process-shim.js";
 import satori from "satori";
 import { Resvg, initWasm } from "@resvg/resvg-wasm";
 
