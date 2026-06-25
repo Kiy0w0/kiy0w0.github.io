@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   createFolder,
@@ -16,6 +16,7 @@ export function Editor() {
   const { id } = useParams<{ id: string }>();
   const editing = Boolean(id);
   const navigate = useNavigate();
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   const [folders, setFolders] = useState<Folder[]>([]);
   const [title, setTitle] = useState("");
@@ -61,6 +62,60 @@ export function Editor() {
     setFolderId(f.id);
     setNewFolder("");
   }
+
+  // Wrap the current selection (or a placeholder) with markdown markers.
+  function wrap(before: string, after: string, placeholder: string) {
+    const ta = bodyRef.current;
+    if (!ta) return;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const sel = body.slice(start, end) || placeholder;
+    const next = body.slice(0, start) + before + sel + after + body.slice(end);
+    setBody(next);
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.selectionStart = start + before.length;
+      ta.selectionEnd = start + before.length + sel.length;
+    });
+  }
+
+  // Insert a marker at the start of the current line (headings, lists, quotes).
+  function prefixLine(prefix: string) {
+    const ta = bodyRef.current;
+    if (!ta) return;
+    const pos = ta.selectionStart;
+    const lineStart = body.lastIndexOf("\n", pos - 1) + 1;
+    setBody(body.slice(0, lineStart) + prefix + body.slice(lineStart));
+    const caret = pos + prefix.length;
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.selectionStart = ta.selectionEnd = caret;
+    });
+  }
+
+  function onBodyKey(e: KeyboardEvent<HTMLTextAreaElement>) {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    const k = e.key.toLowerCase();
+    if (k === "b") {
+      e.preventDefault();
+      wrap("**", "**", "bold");
+    } else if (k === "i") {
+      e.preventDefault();
+      wrap("*", "*", "italic");
+    }
+  }
+
+  const mdTools = [
+    { label: "B", title: "Bold (Ctrl+B)", run: () => wrap("**", "**", "bold") },
+    { label: "I", title: "Italic (Ctrl+I)", run: () => wrap("*", "*", "italic") },
+    { label: "S", title: "Strikethrough", run: () => wrap("~~", "~~", "text") },
+    { label: "H", title: "Heading", run: () => prefixLine("## ") },
+    { label: "❝", title: "Quote", run: () => prefixLine("> ") },
+    { label: "•", title: "List", run: () => prefixLine("- ") },
+    { label: "</>", title: "Inline code", run: () => wrap("`", "`", "code") },
+    { label: "▤", title: "Code block", run: () => wrap("```\n", "\n```", "code") },
+    { label: "link", title: "Link", run: () => wrap("[", "](https://)", "text") },
+  ];
 
   async function onSave() {
     setBusy(true);
@@ -146,12 +201,29 @@ export function Editor() {
             {showPreview ? (
               <MarkdownView source={body} />
             ) : (
-              <textarea
-                className="field__input field__textarea mono"
-                rows={16}
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-              />
+              <>
+                <div className="md-toolbar">
+                  {mdTools.map((t) => (
+                    <button
+                      key={t.title}
+                      type="button"
+                      className="md-btn"
+                      title={t.title}
+                      onClick={t.run}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  ref={bodyRef}
+                  className="field__input field__textarea mono"
+                  rows={16}
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  onKeyDown={onBodyKey}
+                />
+              </>
             )}
           </label>
 

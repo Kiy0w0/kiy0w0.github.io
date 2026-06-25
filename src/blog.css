@@ -185,6 +185,28 @@
 }
 .field__input:focus { border-color: var(--accent); }
 .field__textarea { resize: vertical; line-height: 1.6; }
+
+/* Markdown toolbar */
+.md-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+.md-btn {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0.25rem 0.5rem;
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.md-btn:hover { color: var(--accent); border-color: var(--accent); }
 .link-toggle {
   background: none;
   border: none;
