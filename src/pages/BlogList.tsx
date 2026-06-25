@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { listFolders, listPosts, type Folder, type Post } from "../lib/blog";
 import { useAuth } from "../hooks/useAuth";
-import { FolderChips } from "../components/blog/FolderChips";
 import { PostRow } from "../components/blog/PostRow";
 import { useMeta, titled } from "../lib/meta";
 
@@ -10,7 +9,7 @@ export function BlogList() {
   const { isOwner, signOut } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [folders, setFolders] = useState<Folder[]>([]);
-  const [active, setActive] = useState<string | null>(null);
+  const [open, setOpen] = useState<Folder | null>(null);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,27 +33,44 @@ export function BlogList() {
     };
   }, [isOwner]);
 
-  const folderById = useMemo(
-    () => Object.fromEntries(folders.map((f) => [f.id, f])),
-    [folders],
-  );
+  const countByFolder = useMemo(() => {
+    const m: Record<string, number> = {};
+    for (const p of posts) if (p.folder_id) m[p.folder_id] = (m[p.folder_id] ?? 0) + 1;
+    return m;
+  }, [posts]);
+
+  const searching = query.trim().length > 0;
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return posts.filter((p) => {
-      if (active && folderById[p.folder_id ?? ""]?.slug !== active) return false;
-      if (!q) return true;
-      return `${p.title} ${p.excerpt}`.toLowerCase().includes(q);
+      if (q) return `${p.title} ${p.excerpt}`.toLowerCase().includes(q);
+      if (open) return p.folder_id === open.id;
+      return !p.folder_id;
     });
-  }, [posts, active, query, folderById]);
+  }, [posts, open, query]);
+
+  const folderName = (id: string | null) =>
+    id ? folders.find((f) => f.id === id)?.name : undefined;
 
   return (
     <main className="page blog">
       <div className="blog-wrap">
         <header className="blog-head">
-          <Link to="/" className="blog-back mono">← home</Link>
+          {!open && <Link to="/" className="blog-back mono">← home</Link>}
           <div className="blog-head__row">
-            <h1 className="blog-title">writing</h1>
+            <h1 className="blog-title">
+              {open && (
+                <button
+                  className="folder-back mono"
+                  onClick={() => setOpen(null)}
+                  aria-label="Back to folders"
+                >
+                  ←
+                </button>
+              )}
+              {open ? open.name : "writing"}
+            </h1>
             {isOwner && (
               <div className="blog-owner">
                 <Link to="/blog/new" className="btn-sm">+ new</Link>
@@ -65,17 +81,27 @@ export function BlogList() {
           <p className="blog-muted">{visible.length} notes</p>
         </header>
 
-        <input
-          className="blog-search"
-          type="search"
-          placeholder="search posts"
-          aria-label="Search posts"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+        {!open && (
+          <input
+            className="blog-search"
+            type="search"
+            placeholder="search posts"
+            aria-label="Search posts"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        )}
 
-        {folders.length > 0 && (
-          <FolderChips folders={folders} active={active} onSelect={setActive} />
+        {!open && !searching && folders.length > 0 && (
+          <div className="folder-grid">
+            {folders.map((f) => (
+              <button key={f.id} className="folder-card" onClick={() => setOpen(f)}>
+                <span className="folder-card__icon" aria-hidden>📁</span>
+                <span className="folder-card__name">{f.name}</span>
+                <span className="folder-card__count mono">{countByFolder[f.id] ?? 0}</span>
+              </button>
+            ))}
+          </div>
         )}
 
         {loading && <p className="blog-muted blog-state">loading…</p>}
@@ -89,7 +115,7 @@ export function BlogList() {
             <PostRow
               key={p.id}
               post={p}
-              folderName={folderById[p.folder_id ?? ""]?.name}
+              folderName={searching ? folderName(p.folder_id) : undefined}
             />
           ))}
         </div>

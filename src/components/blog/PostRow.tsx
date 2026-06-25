@@ -20,6 +20,7 @@ export function PostRow({ post, folderName }: { post: Post; folderName?: string 
       <time className="post-row__meta mono">
         {formatDateTime(post.created_at)}
         {folderName ? ` · ${folderName}` : ""}
+        {post.views > 0 ? ` · ${post.views} views` : ""}
       </time>
     </Link>
   );

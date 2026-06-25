@@ -1,7 +1,3 @@
-// Cloudflare Pages Function for /blog/:slug — injects real OG/title tags so link
-// previews (Discord, WhatsApp, Twitter) show the post, not the static default.
-// Social crawlers don't run JS, so the JS useMeta hook can't help them; this
-// rewrites the HTML <head> server-side before the page is sent.
 const esc = (s) =>
   String(s)
     .replace(/&/g, "&amp;")
@@ -29,13 +25,14 @@ export async function onRequest(context) {
     const arr = await r.json();
     post = Array.isArray(arr) ? arr[0] : null;
   } catch {
-    return res; // on any failure, serve the default shell unchanged
+    return res;
   }
   if (!post) return res;
 
   const title = `${post.title} · kiy0w0`;
   const desc = post.excerpt || "";
-  const image = post.cover_url || "";
+  const origin = new URL(context.request.url).origin;
+  const image = post.cover_url || `${origin}/og/${encodeURIComponent(params.slug)}.png`;
 
   return new HTMLRewriter()
     .on("title", { element: (e) => e.setInnerContent(title) })

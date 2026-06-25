@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { animate, scrambleText } from "animejs";
 import { STATUS_META, type Profile } from "../lib/discord";
 import { useLastTrack } from "../hooks/useLastTrack";
+import { useLivingAccent } from "../lib/livingAccent";
 import { CommandPalette } from "./CommandPalette";
+import { HomeStatus } from "./HomeStatus";
 
-// Static tagline (per request).
 const TAGLINE = "self taught developer, i'd love to make open source projects";
 
 const fmt = (ms: number) => {
@@ -12,8 +13,6 @@ const fmt = (ms: number) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
 
-// Presentational card. All data is pre-normalized by the discord lib.
-// Layout: full-viewport transparent hero (centered), then scroll-revealed details.
 export function ProfileCard({ profile }: { profile: Profile }) {
   const status = STATUS_META[profile.status];
   const name = profile.globalName ?? profile.username;
@@ -24,13 +23,14 @@ export function ProfileCard({ profile }: { profile: Profile }) {
 
   const lastTrack = useLastTrack();
   const sp = profile.spotify;
+  const lt = profile.listening;
+  useLivingAccent(sp?.albumArt ?? null);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
 
   const act = profile.activities[0];
 
-  // tick once a second to drive elapsed timers (Spotify bar + activity)
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (!sp?.end && !act?.start) return;
@@ -38,14 +38,12 @@ export function ProfileCard({ profile }: { profile: Profile }) {
     return () => clearInterval(id);
   }, [sp?.end, act?.start]);
 
-  // anime.js 4.4 scrambleText: settle the name from random glyphs on page entry.
   useEffect(() => {
     if (nameRef.current) {
       animate(nameRef.current, { innerHTML: scrambleText({ text: name }) });
     }
   }, [name]);
 
-  // Fade/slide each .reveal into view as it scrolls in.
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -65,7 +63,6 @@ export function ProfileCard({ profile }: { profile: Profile }) {
     return () => obs.disconnect();
   }, [profile]);
 
-  // Spotify progress
   let pct = 0;
   let elapsed = "0:00";
   let total = "0:00";
@@ -77,17 +74,14 @@ export function ProfileCard({ profile }: { profile: Profile }) {
     total = fmt(dur);
   }
 
-  // elapsed time the activity has been running (e.g. "12:34 elapsed")
   const actElapsed = act?.start ? fmt(now - act.start) : null;
 
-  // activity verb by Discord type: 0 Playing, 1 Streaming, 3 Watching, 5 Competing
   const actLabel =
     act?.type === 3 ? "Watching" : act?.type === 1 ? "Streaming" : "Playing";
 
   return (
     <div className="profile" ref={rootRef}>
       <section className="hero">
-        {/* now playing / last played — sits above the avatar */}
         {lastTrack && (
           <a className="lastfm" href={lastTrack.url} target="_blank" rel="noreferrer">
             {lastTrack.art && <img src={lastTrack.art} alt="" />}
@@ -130,7 +124,6 @@ export function ProfileCard({ profile }: { profile: Profile }) {
           <p className="tag">{tag}</p>
         </div>
 
-        {/* Discord badges */}
         {profile.badges.length > 0 && (
           <div className="badges">
             {profile.badges.map((b) => (
@@ -144,7 +137,6 @@ export function ProfileCard({ profile }: { profile: Profile }) {
           </div>
         )}
 
-        {/* detailed activity (game/app) with art, details, state, elapsed time */}
         {act && (
           <div className="activity-card">
             {act.largeImage && (
@@ -167,7 +159,6 @@ export function ProfileCard({ profile }: { profile: Profile }) {
           </div>
         )}
 
-        {/* detailed Spotify now-playing with art + live time */}
         {sp && (
           <a
             className="spotify spotify--hero"
@@ -193,6 +184,18 @@ export function ProfileCard({ profile }: { profile: Profile }) {
           </a>
         )}
 
+        {lt && (
+          <div className="spotify spotify--hero">
+            {lt.albumArt && <img src={lt.albumArt} alt={lt.title} />}
+            <div className="spotify-meta">
+              <span className="label mono">Listening on Discord</span>
+              <strong>{lt.title}</strong>
+              {lt.artist && <span className="by">by {lt.artist}</span>}
+              <span className="line dim">{lt.name}</span>
+            </div>
+          </div>
+        )}
+
         <p className="tagline">{TAGLINE}</p>
 
         {profile.customStatus && (
@@ -200,6 +203,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
         )}
 
         <CommandPalette />
+        <HomeStatus />
       </section>
     </div>
   );

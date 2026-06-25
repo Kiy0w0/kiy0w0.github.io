@@ -16,6 +16,7 @@ export type Post = {
   folder_id: string | null;
   published: boolean;
   cover_url: string;
+  views: number;
   created_at: string;
   updated_at: string;
 };
@@ -86,6 +87,12 @@ export async function getPostById(id: string): Promise<Post | null> {
   const { data, error } = await supabase.from("posts").select("*").eq("id", id).maybeSingle();
   if (error) throw error;
   return data;
+}
+
+export async function incrementViews(slug: string): Promise<number | null> {
+  const { data, error } = await supabase.rpc("increment_post_views", { post_slug: slug });
+  if (error) return null;
+  return typeof data === "number" ? data : null;
 }
 
 export async function createPost(input: PostInput): Promise<Post> {

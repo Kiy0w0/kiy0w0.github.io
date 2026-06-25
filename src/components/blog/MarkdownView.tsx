@@ -1,5 +1,8 @@
-import { marked } from "marked";
+import { Marked } from "marked";
+import { markedHighlight } from "marked-highlight";
+import hljs from "highlight.js/lib/common";
 import DOMPurify from "dompurify";
+import "highlight.js/styles/github-dark.css";
 
 // Only these hosts may appear in an <iframe src>. Anything else is dropped,
 // even though only the owner writes posts — defense in depth.
@@ -27,6 +30,17 @@ function embed(md: string): string {
     return line;
   });
 }
+
+const marked = new Marked(
+  markedHighlight({
+    emptyLangClass: "hljs",
+    langPrefix: "hljs language-",
+    highlight(code, lang) {
+      const language = hljs.getLanguage(lang) ? lang : "plaintext";
+      return hljs.highlight(code, { language }).value;
+    },
+  }),
+);
 
 export function renderMarkdown(md: string): string {
   const raw = marked.parse(embed(md), { async: false }) as string;

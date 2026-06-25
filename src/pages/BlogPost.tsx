@@ -4,6 +4,7 @@ import {
   deletePost,
   formatDateTime,
   getPostBySlug,
+  incrementViews,
   listFolders,
   type Post,
 } from "../lib/blog";
@@ -17,6 +18,7 @@ export function BlogPost() {
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
   const [folderName, setFolderName] = useState<string>("");
+  const [views, setViews] = useState<number | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "missing">("loading");
 
   useEffect(() => {
@@ -31,6 +33,10 @@ export function BlogPost() {
         }
         setPost(p);
         setState("ready");
+        setViews(p.views);
+        if (!isOwner) {
+          incrementViews(p.slug).then((n) => alive && n != null && setViews(n));
+        }
         if (p.folder_id) {
           const folders = await listFolders();
           if (alive) setFolderName(folders.find((f) => f.id === p.folder_id)?.name ?? "");
@@ -40,7 +46,7 @@ export function BlogPost() {
     return () => {
       alive = false;
     };
-  }, [slug]);
+  }, [slug, isOwner]);
 
   useMeta({
     title: post ? `${post.title} · kiy0w0` : "blog · kiy0w0",
@@ -83,6 +89,7 @@ export function BlogPost() {
         <div className="post-meta mono">
           {formatDateTime(post.created_at)}
           {folderName ? ` · ${folderName}` : ""}
+          {views != null ? ` · ${views} views` : ""}
           {!post.published && " · draft"}
         </div>
 

@@ -19,6 +19,8 @@ export type Entry = {
   id: string;
   name: string;
   message: string;
+  likes: number;
+  owner_liked: boolean;
   created_at: string;
 };
 
@@ -41,4 +43,15 @@ export async function addEntry(name: string, message: string): Promise<Entry> {
     .single();
   if (error) throw error;
   return data;
+}
+
+export async function likeEntry(id: string): Promise<number | null> {
+  const { data, error } = await gb.rpc("like_entry", { entry_id: id });
+  if (error) return null;
+  return typeof data === "number" ? data : null;
+}
+
+export async function setOwnerLiked(id: string, liked: boolean): Promise<boolean> {
+  const { error } = await gb.from("guestbook").update({ owner_liked: liked }).eq("id", id);
+  return !error;
 }

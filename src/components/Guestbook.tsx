@@ -1,9 +1,21 @@
 import { useEffect, useState } from "react";
-import { addEntry, listEntries, type Entry } from "../lib/guestbook";
+import { addEntry, likeEntry, listEntries, setOwnerLiked, type Entry } from "../lib/guestbook";
 import { formatDateTime } from "../lib/blog";
+import { useAuth } from "../hooks/useAuth";
+
+const LIKED_KEY = "gb-liked";
+const getLiked = (): Set<string> => {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(LIKED_KEY) ?? "[]"));
+  } catch {
+    return new Set();
+  }
+};
 
 export function Guestbook() {
+  const { isOwner } = useAuth();
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [liked, setLiked] = useState<Set<string>>(getLiked);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -36,6 +48,24 @@ export function Guestbook() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function onLike(id: string) {
+    if (liked.has(id)) return;
+    const next = new Set(liked).add(id);
+    setLiked(next);
+    localStorage.setItem(LIKED_KEY, JSON.stringify([...next]));
+    setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, likes: e.likes + 1 } : e)));
+    const total = await likeEntry(id);
+    if (total != null)
+      setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, likes: total } : e)));
+  }
+
+  async function onOwnerLike(id: string, current: boolean) {
+    setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, owner_liked: !current } : e)));
+    const ok = await setOwnerLiked(id, !current);
+    if (!ok)
+      setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, owner_liked: current } : e)));
   }
 
   return (
@@ -81,6 +111,27 @@ export function Guestbook() {
                 <time className="gb-time mono">{formatDateTime(en.created_at)}</time>
               </div>
               <p className="gb-msg">{en.message}</p>
+              <div className="gb-entry__foot">
+                <button
+                  className={"gb-like" + (liked.has(en.id) ? " gb-like--on" : "")}
+                  onClick={() => onLike(en.id)}
+                  disabled={liked.has(en.id)}
+                  aria-label="Like this message"
+                >
+                  ♥{en.likes > 0 ? ` ${en.likes}` : ""}
+                </button>
+                {en.owner_liked && (
+                  <span className="gb-owner-like mono">♥ Liked by luraph</span>
+                )}
+                {isOwner && (
+                  <button
+                    className="gb-owner-toggle mono"
+                    onClick={() => onOwnerLike(en.id, en.owner_liked)}
+                  >
+                    {en.owner_liked ? "unlike" : "like as owner"}
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
