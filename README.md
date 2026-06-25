@@ -78,11 +78,26 @@ dev.
 
 ## Deploy
 
-Push to GitHub and import the repo on vercel.com — it picks up Vite by itself.
-Add the same env vars from .env under Project → Settings → Environment Variables
-(include STEAM_API_KEY if you're using friends), then deploy. vercel.json
-rewrites every path to index.html so a deep link like /blog/some-post survives a
-hard refresh.
+Works on either Vercel or Cloudflare Pages. The Steam proxy ships in both
+formats — api/steam.js for Vercel, functions/api/steam.js for Cloudflare — and
+only the host's own one runs, so they don't clash.
+
+### Vercel
+
+Import the repo on vercel.com — it picks up Vite by itself. Add the env vars
+from .env under Project → Settings → Environment Variables (include
+STEAM_API_KEY if you use friends), then deploy. vercel.json rewrites every path
+to index.html so a deep link like /blog/some-post survives a hard refresh.
+
+### Cloudflare Pages
+
+Create a Pages project from the repo. Build command `npm run build`, output
+directory `dist`. Add the env vars under Settings → Environment variables — the
+VITE_ ones are needed at build time, STEAM_API_KEY at runtime for the function.
+SPA routing comes from public/_redirects, and functions/api/steam.js is detected
+as a Pages Function automatically. To test the function locally:
+`npx wrangler pages dev dist` (after a build) — plain `npm run dev` doesn't run
+it.
 
 ## License
 
