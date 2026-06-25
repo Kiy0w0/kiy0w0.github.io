@@ -1,8 +1,10 @@
 import { useDiscord } from "../hooks/useDiscord";
 import { ProfileCard } from "../components/ProfileCard";
+import { useMeta } from "../lib/meta";
 
 export function Profile() {
   const { profile, loading, error, retry } = useDiscord();
+  useMeta({ title: "kiy0w0", description: "personal site — blog, photography, steam friends" });
 
   return (
     <main className="page" id="top">

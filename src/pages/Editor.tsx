@@ -11,6 +11,7 @@ import {
   type PostInput,
 } from "../lib/blog";
 import { MarkdownView } from "../components/blog/MarkdownView";
+import { uploadImage } from "../lib/photos";
 
 export function Editor() {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +24,8 @@ export function Editor() {
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
   const [excerpt, setExcerpt] = useState("");
+  const [coverUrl, setCoverUrl] = useState("");
+  const [coverBusy, setCoverBusy] = useState(false);
   const [body, setBody] = useState("");
   const [folderId, setFolderId] = useState<string | null>(null);
   const [published, setPublished] = useState(false);
@@ -43,6 +46,7 @@ export function Editor() {
       setSlug(p.slug);
       setSlugTouched(true);
       setExcerpt(p.excerpt);
+      setCoverUrl(p.cover_url);
       setBody(p.body);
       setFolderId(p.folder_id);
       setPublished(p.published);
@@ -115,6 +119,12 @@ export function Editor() {
     { label: "</>", title: "Inline code", run: () => wrap("`", "`", "code") },
     { label: "▤", title: "Code block", run: () => wrap("```\n", "\n```", "code") },
     { label: "link", title: "Link", run: () => wrap("[", "](https://)", "text") },
+    { label: "img", title: "Image", run: () => wrap("![", "](https://)", "alt") },
+    {
+      label: "▶",
+      title: "Video — a YouTube/Vimeo link alone on its line becomes an embed",
+      run: () => wrap("\n", "\n", "https://youtu.be/VIDEO_ID"),
+    },
   ];
 
   async function onSave() {
@@ -127,6 +137,7 @@ export function Editor() {
       body,
       folder_id: folderId,
       published,
+      cover_url: coverUrl,
     };
     try {
       if (editing && id) await updatePost(id, input);
@@ -189,6 +200,38 @@ export function Editor() {
           <label className="field">
             <span className="field__label mono">excerpt</span>
             <input className="field__input" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} />
+          </label>
+
+          <label className="field">
+            <span className="field__label mono">cover image</span>
+            {coverUrl ? (
+              <div className="cover-edit">
+                <img src={coverUrl} alt="" className="cover-edit__img" />
+                <button type="button" className="btn-sm btn-ghost" onClick={() => setCoverUrl("")}>
+                  remove
+                </button>
+              </div>
+            ) : (
+              <input
+                type="file"
+                accept="image/*"
+                className="field__input"
+                disabled={coverBusy}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setCoverBusy(true);
+                  setError(null);
+                  try {
+                    setCoverUrl(await uploadImage(file));
+                  } catch (err) {
+                    setError((err as Error).message ?? "Cover upload failed");
+                  } finally {
+                    setCoverBusy(false);
+                  }
+                }}
+              />
+            )}
           </label>
 
           <label className="field">

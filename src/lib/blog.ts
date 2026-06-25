@@ -15,6 +15,7 @@ export type Post = {
   body: string;
   folder_id: string | null;
   published: boolean;
+  cover_url: string;
   created_at: string;
   updated_at: string;
 };
@@ -26,6 +27,7 @@ export type PostInput = {
   body: string;
   folder_id: string | null;
   published: boolean;
+  cover_url: string;
 };
 
 export function slugify(input: string): string {

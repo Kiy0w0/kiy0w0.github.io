@@ -4,6 +4,7 @@ import { listFolders, listPosts, type Folder, type Post } from "../lib/blog";
 import { useAuth } from "../hooks/useAuth";
 import { FolderChips } from "../components/blog/FolderChips";
 import { PostRow } from "../components/blog/PostRow";
+import { useMeta, titled } from "../lib/meta";
 
 export function BlogList() {
   const { isOwner, signOut } = useAuth();
@@ -13,6 +14,8 @@ export function BlogList() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useMeta({ title: titled("writing"), description: "notes, thoughts, trashtalk" });
 
   useEffect(() => {
     let alive = true;

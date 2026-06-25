@@ -3,7 +3,13 @@ import { formatDateTime, type Post } from "../../lib/blog";
 
 export function PostRow({ post, folderName }: { post: Post; folderName?: string }) {
   return (
-    <Link to={`/blog/${post.slug}`} className="post-row">
+    <Link
+      to={`/blog/${post.slug}`}
+      className={"post-row" + (post.cover_url ? " post-row--cover" : "")}
+    >
+      {post.cover_url && (
+        <img src={post.cover_url} alt="" className="post-row__cover" loading="lazy" />
+      )}
       <div className="post-row__main">
         <span className="post-row__title">
           {post.title}

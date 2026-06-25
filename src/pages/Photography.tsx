@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { deletePhoto, listPhotos, uploadPhoto, type Photo } from "../lib/photos";
 import { formatDateTime } from "../lib/blog";
 import { useAuth } from "../hooks/useAuth";
+import { useMeta, titled } from "../lib/meta";
 
 export function Photography() {
   const { isOwner } = useAuth();
+  useMeta({ title: titled("photography"), description: "photos i've taken" });
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [album, setAlbum] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

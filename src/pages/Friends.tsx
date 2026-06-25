@@ -9,9 +9,11 @@ import {
   type SteamSummary,
 } from "../lib/steam";
 import { useAuth } from "../hooks/useAuth";
+import { useMeta, titled } from "../lib/meta";
 
 export function Friends() {
   const { isOwner } = useAuth();
+  useMeta({ title: titled("friends"), description: "people i play with on steam" });
   const [friends, setFriends] = useState<Friend[]>([]);
   const [summaries, setSummaries] = useState<Record<string, SteamSummary>>({});
   const [loading, setLoading] = useState(true);

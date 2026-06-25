@@ -9,6 +9,7 @@ import {
 } from "../lib/blog";
 import { useAuth } from "../hooks/useAuth";
 import { MarkdownView } from "../components/blog/MarkdownView";
+import { useMeta } from "../lib/meta";
 
 export function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -41,6 +42,12 @@ export function BlogPost() {
     };
   }, [slug]);
 
+  useMeta({
+    title: post ? `${post.title} · kiy0w0` : "blog · kiy0w0",
+    description: post?.excerpt,
+    image: post?.cover_url || undefined,
+  });
+
   async function onDelete() {
     if (!post) return;
     if (!confirm("Delete this post?")) return;
@@ -71,6 +78,7 @@ export function BlogPost() {
     <main className="page blog">
       <article className="blog-wrap blog-article">
         <Link to="/blog" className="blog-back mono">← writing</Link>
+        {post.cover_url && <img src={post.cover_url} alt="" className="post-cover" />}
         <h1 className="post-title">{post.title}</h1>
         <div className="post-meta mono">
           {formatDateTime(post.created_at)}

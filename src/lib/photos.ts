@@ -41,6 +41,19 @@ export async function uploadPhoto(file: File, caption: string, album: string): P
   return data;
 }
 
+// Upload an image to storage and return its public URL, without a photos row.
+// Used for blog cover images.
+export async function uploadImage(file: File): Promise<string> {
+  const processed = await processImage(file);
+  const ext = (processed.name.split(".").pop() ?? "webp").toLowerCase();
+  const path = `${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage
+    .from("photos")
+    .upload(path, processed, { cacheControl: "3600", upsert: false, contentType: processed.type });
+  if (error) throw error;
+  return supabase.storage.from("photos").getPublicUrl(path).data.publicUrl;
+}
+
 export async function deletePhoto(photo: Photo): Promise<void> {
   await supabase.storage.from("photos").remove([photo.path]);
   const { error } = await supabase.from("photos").delete().eq("id", photo.id);
