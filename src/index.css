@@ -234,6 +234,94 @@ body {
 }
 .home-status__item { white-space: nowrap; }
 
+.featured {
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  text-align: left;
+}
+.featured-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.featured-rows { display: flex; flex-direction: column; }
+.featured-rows .post-row:first-child { border-top: none; }
+.featured-hint { color: var(--muted); font-size: 0.72rem; margin: 0; }
+.featured-picklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.featured-pick {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.featured-heading {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.featured-editbtn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.68rem;
+  opacity: 0.6;
+  text-decoration: underline;
+}
+.featured-editbtn:hover { opacity: 1; }
+.featured-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.featured-link {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.featured-link:hover { color: var(--accent); border-color: var(--accent); }
+
+.featured-edit { display: flex; flex-direction: column; gap: 0.5rem; }
+.featured-edit__row { display: flex; gap: 0.4rem; align-items: center; }
+.featured-input {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4rem 0.55rem;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  flex: 1;
+  min-width: 0;
+}
+.featured-input:focus { outline: none; border-color: var(--accent); }
+.featured-x {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  flex-shrink: 0;
+}
+.featured-x:hover { color: #ff4d6d; border-color: #ff4d6d; }
+.featured-edit__actions { display: flex; gap: 0.4rem; justify-content: center; flex-wrap: wrap; }
+
 /* scroll cue */
 .scroll-cue {
   position: absolute;

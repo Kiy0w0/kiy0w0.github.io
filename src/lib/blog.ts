@@ -116,3 +116,24 @@ export async function deletePost(id: string): Promise<void> {
   const { error } = await supabase.from("posts").delete().eq("id", id);
   if (error) throw error;
 }
+
+export type Featured = { heading: string; slugs: string[] };
+
+export async function getFeatured(): Promise<Featured> {
+  const { data } = await supabase
+    .from("home_featured")
+    .select("heading,links")
+    .eq("id", 1)
+    .maybeSingle();
+  return {
+    heading: data?.heading ?? "Latest blog",
+    slugs: Array.isArray(data?.links) ? data.links.slice(0, 3) : [],
+  };
+}
+
+export async function saveFeatured(f: Featured): Promise<boolean> {
+  const { error } = await supabase
+    .from("home_featured")
+    .upsert({ id: 1, heading: f.heading, links: f.slugs.slice(0, 3) });
+  return !error;
+}

@@ -42,6 +42,7 @@ export async function onRequest(context) {
         e.append(`<meta property="og:title" content="${esc(title)}">`, { html: true });
         e.append(`<meta property="og:description" content="${esc(desc)}">`, { html: true });
         e.append(`<meta property="og:type" content="article">`, { html: true });
+        e.append(`<meta property="og:url" content="${esc(context.request.url)}">`, { html: true });
         if (image) {
           e.append(`<meta property="og:image" content="${esc(image)}">`, { html: true });
           e.append(`<meta name="twitter:card" content="summary_large_image">`, { html: true });

@@ -5,6 +5,7 @@ import { useLastTrack } from "../hooks/useLastTrack";
 import { useLivingAccent } from "../lib/livingAccent";
 import { CommandPalette } from "./CommandPalette";
 import { HomeStatus } from "./HomeStatus";
+import { HomeFeatured } from "./HomeFeatured";
 
 const TAGLINE = "self taught developer, i'd love to make open source projects";
 
@@ -204,6 +205,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
 
         <CommandPalette />
         <HomeStatus />
+        <HomeFeatured />
       </section>
     </div>
   );
