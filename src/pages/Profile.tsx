@@ -1,12 +1,14 @@
 import { useDiscord } from "../hooks/useDiscord";
 import { ProfileCard } from "../components/ProfileCard";
 import { useMeta } from "../lib/meta";
+import { Guestbook } from "../components/Guestbook";
 
 export function Profile() {
   const { profile, loading, error, retry } = useDiscord();
   useMeta({ title: "kiy0w0", description: "personal site — blog, photography, steam friends" });
 
   return (
+    <>
     <main className="page" id="top">
       {loading && !profile && (
         <div className="card skeleton" aria-busy="true">
@@ -32,5 +34,7 @@ export function Profile() {
 
       {profile && <ProfileCard profile={profile} />}
     </main>
+    <Guestbook />
+    </>
   );
 }

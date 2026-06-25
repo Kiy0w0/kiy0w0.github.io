@@ -1,0 +1,41 @@
+import { createClient } from "@supabase/supabase-js";
+import { censor } from "./censor";
+
+// The guestbook lives in its OWN Supabase project (separate from blog/photos),
+// so public writes can't touch anything else. It gets its own client.
+const url = import.meta.env.VITE_GUESTBOOK_SUPABASE_URL;
+const key = import.meta.env.VITE_GUESTBOOK_SUPABASE_ANON_KEY;
+if (!url || !key) {
+  console.warn(
+    "Guestbook env vars missing: set VITE_GUESTBOOK_SUPABASE_URL and VITE_GUESTBOOK_SUPABASE_ANON_KEY",
+  );
+}
+const gb = createClient(url ?? "", key ?? "");
+
+export type Entry = {
+  id: string;
+  name: string;
+  message: string;
+  created_at: string;
+};
+
+export async function listEntries(): Promise<Entry[]> {
+  const { data, error } = await gb
+    .from("guestbook")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function addEntry(name: string, message: string): Promise<Entry> {
+  // Client-side censor for instant UX; the DB trigger censors again server-side.
+  const { data, error } = await gb
+    .from("guestbook")
+    .insert({ name: censor(name), message: censor(message) })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}

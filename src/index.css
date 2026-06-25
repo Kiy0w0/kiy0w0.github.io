@@ -512,6 +512,83 @@ body {
   opacity: 0.7;
 }
 
+/* Guestbook (home, below the card) — two columns: form left, entries right */
+.guestbook {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+}
+.gb-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.gb-label {
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.gb-rule { flex: 1; height: 1px; background: var(--border); }
+.gb-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.5rem;
+}
+.gb-lead {
+  color: var(--text);
+  font-size: 1.05rem;
+  margin-bottom: 1.75rem;
+}
+.gb-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.gb-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 0.5rem 0;
+  color: var(--text);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.gb-input::placeholder { color: var(--muted); }
+.gb-input:focus { border-bottom-color: var(--accent); }
+.gb-textarea { resize: vertical; line-height: 1.6; }
+.gb-send {
+  align-self: flex-start;
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+}
+.gb-send:disabled { color: var(--muted); cursor: default; }
+.gb-right { display: flex; flex-direction: column; gap: 1.75rem; }
+.gb-entry__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+.gb-name { color: var(--text); font-size: 0.9rem; }
+.gb-time { color: var(--muted); font-size: 0.7rem; }
+.gb-msg {
+  color: var(--text);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+@media (max-width: 720px) {
+  .gb-cols { grid-template-columns: 1fr; gap: 2.5rem; }
+}
+
 .cmdk-panick {
   width: 22px;
   height: 22px;
