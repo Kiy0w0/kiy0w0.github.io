@@ -21,6 +21,8 @@ export type Entry = {
   message: string;
   likes: number;
   owner_liked: boolean;
+  owner_reply: string | null;
+  owner_reply_at: string | null;
   created_at: string;
 };
 
@@ -53,5 +55,14 @@ export async function likeEntry(id: string): Promise<number | null> {
 
 export async function setOwnerLiked(id: string, liked: boolean): Promise<boolean> {
   const { error } = await gb.rpc("set_owner_liked", { entry_id: id, liked });
+  return !error;
+}
+
+export async function setOwnerReply(id: string, text: string): Promise<boolean> {
+  const trimmed = text.trim();
+  const payload = trimmed
+    ? { owner_reply: censor(trimmed), owner_reply_at: new Date().toISOString() }
+    : { owner_reply: null, owner_reply_at: null };
+  const { error } = await gb.from("guestbook").update(payload).eq("id", id);
   return !error;
 }

@@ -2,6 +2,7 @@ import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { SiteAmbience } from "./components/SiteAmbience";
 import { Profile } from "./pages/Profile";
 import { ProtectedRoute } from "./components/blog/ProtectedRoute";
 import "./index.css";
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
       <BrowserRouter>
+        <SiteAmbience />
         <Suspense fallback={<main className="page blog"><div className="blog-wrap"><p className="blog-muted">loading…</p></div></main>}>
           <Routes>
             <Route path="/" element={<Profile />} />

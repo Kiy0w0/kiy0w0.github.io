@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { addEntry, likeEntry, listEntries, setOwnerLiked, type Entry } from "../lib/guestbook";
+import { addEntry, likeEntry, listEntries, setOwnerLiked, setOwnerReply, type Entry } from "../lib/guestbook";
 import { formatDateTime } from "../lib/blog";
 import { useAuth } from "../hooks/useAuth";
+import { getProfile, type Profile } from "../lib/discord";
 
 const LIKED_KEY = "gb-liked";
 const getLiked = (): Set<string> => {
@@ -21,6 +22,9 @@ export function Guestbook() {
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [owner, setOwner] = useState<Profile | null>(null);
+  const [replyTo, setReplyTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
 
   useEffect(() => {
     let alive = true;
@@ -28,6 +32,7 @@ export function Guestbook() {
       .then((e) => alive && setEntries(e))
       .catch((e) => alive && setError(e.message ?? "Failed to load"))
       .finally(() => alive && setLoading(false));
+    getProfile().then((p) => alive && setOwner(p)).catch(() => {});
     return () => {
       alive = false;
     };
@@ -66,6 +71,23 @@ export function Guestbook() {
     const ok = await setOwnerLiked(id, !current);
     if (!ok)
       setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, owner_liked: current } : e)));
+  }
+
+  function startReply(en: Entry) {
+    setReplyTo(en.id);
+    setReplyText(en.owner_reply ?? "");
+  }
+
+  async function saveReply(id: string) {
+    const text = replyText.trim();
+    setReplyTo(null);
+    const at = text ? new Date().toISOString() : null;
+    const prev = entries;
+    setEntries((p) =>
+      p.map((e) => (e.id === id ? { ...e, owner_reply: text || null, owner_reply_at: at } : e)),
+    );
+    const ok = await setOwnerReply(id, text);
+    if (!ok) setEntries(prev);
   }
 
   return (
@@ -131,7 +153,50 @@ export function Guestbook() {
                     {en.owner_liked ? "unlike" : "like as owner"}
                   </button>
                 )}
+                {isOwner && replyTo !== en.id && (
+                  <button className="gb-owner-toggle mono" onClick={() => startReply(en)}>
+                    {en.owner_reply ? "edit reply" : "reply"}
+                  </button>
+                )}
               </div>
+
+              {replyTo === en.id ? (
+                <div className="gb-reply gb-reply--form">
+                  <textarea
+                    className="gb-input gb-textarea mono"
+                    placeholder="reply as owner…"
+                    maxLength={280}
+                    rows={2}
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                  />
+                  <div className="gb-reply__actions">
+                    <button className="btn-sm" onClick={() => saveReply(en.id)}>
+                      {replyText.trim() ? "send" : "clear"}
+                    </button>
+                    <button className="btn-sm btn-ghost" onClick={() => setReplyTo(null)}>
+                      cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                en.owner_reply && (
+                  <div className="gb-reply">
+                    <img className="gb-reply__pfp" src={owner?.avatarUrl} alt="" aria-hidden="true" />
+                    <div className="gb-reply__body">
+                      <div className="gb-reply__head">
+                        <span className="gb-name mono">
+                          {owner?.globalName ?? owner?.username ?? "luraph"}
+                        </span>
+                        {en.owner_reply_at && (
+                          <time className="gb-time mono">{formatDateTime(en.owner_reply_at)}</time>
+                        )}
+                      </div>
+                      <p className="gb-msg">{en.owner_reply}</p>
+                    </div>
+                  </div>
+                )
+              )}
             </div>
           ))}
         </div>
