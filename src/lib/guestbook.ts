@@ -59,10 +59,11 @@ export async function setOwnerLiked(id: string, liked: boolean): Promise<boolean
 }
 
 export async function setOwnerReply(id: string, text: string): Promise<boolean> {
-  const trimmed = text.trim();
-  const payload = trimmed
-    ? { owner_reply: censor(trimmed), owner_reply_at: new Date().toISOString() }
-    : { owner_reply: null, owner_reply_at: null };
-  const { data, error } = await gb.from("guestbook").update(payload).eq("id", id).select();
-  return !error && (data?.length ?? 0) > 0;
+  const secret = import.meta.env.VITE_GUESTBOOK_OWNER_SECRET ?? "";
+  const { data, error } = await gb.rpc("set_owner_reply", {
+    entry_id: id,
+    reply: text.trim() || null,
+    secret,
+  });
+  return !error && data === true;
 }

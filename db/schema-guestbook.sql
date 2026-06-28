@@ -49,6 +49,21 @@ create policy "guestbook public insert" on guestbook for insert
 alter table guestbook add column if not exists owner_reply text;
 alter table guestbook add column if not exists owner_reply_at timestamptz;
 
-drop policy if exists "guestbook owner update" on guestbook;
-create policy "guestbook owner update" on guestbook for update
-  to authenticated using (true) with check (true);
+create or replace function set_owner_reply(entry_id uuid, reply text, secret text)
+returns boolean as $$
+declare
+  expected text := current_setting('app.owner_secret', true);
+begin
+  if expected is null or expected = '' or secret is distinct from expected then
+    return false;
+  end if;
+  if reply is null or btrim(reply) = '' then
+    update guestbook set owner_reply = null, owner_reply_at = null where id = entry_id;
+  else
+    update guestbook
+      set owner_reply = censor_text(reply), owner_reply_at = now()
+      where id = entry_id;
+  end if;
+  return found;
+end;
+$$ language plpgsql security definer;
