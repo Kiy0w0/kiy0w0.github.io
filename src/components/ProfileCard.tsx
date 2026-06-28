@@ -6,8 +6,9 @@ import { useLivingAccent } from "../lib/livingAccent";
 import { CommandPalette } from "./CommandPalette";
 import { HomeStatus } from "./HomeStatus";
 import { HomeFeatured } from "./HomeFeatured";
+import { SocialRow } from "./SocialRow";
 
-const TAGLINE = "self taught developer, i'd love to make open source projects";
+const TAGLINE = "self taught developer with various interests, currently exploring the world of web development and open source.";
 
 const fmt = (ms: number) => {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -198,6 +199,8 @@ export function ProfileCard({ profile }: { profile: Profile }) {
         )}
 
         <p className="tagline">{TAGLINE}</p>
+
+        <SocialRow />
 
         {profile.customStatus && (
           <p className="custom-status">{profile.customStatus}</p>

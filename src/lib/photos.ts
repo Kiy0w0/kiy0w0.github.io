@@ -1,10 +1,12 @@
 import { supabase } from "./supabase";
 import { processImage } from "./image";
+import { uploadToImageKit, deleteFromImageKit, ikUrl } from "./imagekit";
 
 export type Photo = {
   id: string;
   url: string;
   path: string;
+  public_id: string | null;
   caption: string;
   album: string;
   created_at: string;
@@ -20,42 +22,39 @@ export async function listPhotos(): Promise<Photo[]> {
 }
 
 export async function uploadPhoto(file: File, caption: string, album: string): Promise<Photo> {
-  // Shrink + strip EXIF/GPS before upload.
   const processed = await processImage(file);
-  const ext = (processed.name.split(".").pop() ?? "webp").toLowerCase();
-  const path = `${crypto.randomUUID()}.${ext}`;
-
-  const { error: upErr } = await supabase.storage
-    .from("photos")
-    .upload(path, processed, { cacheControl: "3600", upsert: false, contentType: processed.type });
-  if (upErr) throw upErr;
-
-  const { data: pub } = supabase.storage.from("photos").getPublicUrl(path);
+  const folder = album ? `/ngayon/photos/${album}` : "/ngayon/photos";
+  const up = await uploadToImageKit(processed, folder);
 
   const { data, error } = await supabase
     .from("photos")
-    .insert({ url: pub.publicUrl, path, caption, album })
+    .insert({ url: up.url, path: up.filePath, public_id: up.fileId, caption, album })
     .select()
     .single();
   if (error) throw error;
   return data;
 }
 
-// Upload an image to storage and return its public URL, without a photos row.
-// Used for blog cover images.
 export async function uploadImage(file: File): Promise<string> {
   const processed = await processImage(file);
-  const ext = (processed.name.split(".").pop() ?? "webp").toLowerCase();
-  const path = `${crypto.randomUUID()}.${ext}`;
-  const { error } = await supabase.storage
-    .from("photos")
-    .upload(path, processed, { cacheControl: "3600", upsert: false, contentType: processed.type });
-  if (error) throw error;
-  return supabase.storage.from("photos").getPublicUrl(path).data.publicUrl;
+  const up = await uploadToImageKit(processed, "/ngayon/blog");
+  return up.url;
 }
 
 export async function deletePhoto(photo: Photo): Promise<void> {
-  await supabase.storage.from("photos").remove([photo.path]);
+  if (photo.public_id) {
+    await deleteFromImageKit(photo.public_id).catch(() => {});
+  } else if (photo.path && !photo.path.includes("/")) {
+    await supabase.storage.from("photos").remove([photo.path]).catch(() => {});
+  }
   const { error } = await supabase.from("photos").delete().eq("id", photo.id);
   if (error) throw error;
+}
+
+export function photoThumb(p: Photo, w = 600): string {
+  return p.public_id ? ikUrl(p.path || p.url, { w, c: "maintain_ratio", f: "auto" }) : p.url;
+}
+
+export function photoFull(p: Photo, w = 1920): string {
+  return p.public_id ? ikUrl(p.path || p.url, { w, c: "at_max", f: "auto" }) : p.url;
 }

@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { deletePhoto, listPhotos, uploadPhoto, type Photo } from "../lib/photos";
+import { deletePhoto, listPhotos, uploadPhoto, photoThumb, photoFull, type Photo } from "../lib/photos";
 import { formatDateTime } from "../lib/blog";
 import { useAuth } from "../hooks/useAuth";
 import { useMeta, titled } from "../lib/meta";
@@ -12,7 +12,7 @@ export function Photography() {
   const [album, setAlbum] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lightbox, setLightbox] = useState<Photo | null>(null);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   const fileRef = useRef<HTMLInputElement>(null);
   const [caption, setCaption] = useState("");
@@ -43,6 +43,37 @@ export function Photography() {
     () => (album ? photos.filter((p) => p.album === album) : photos),
     [photos, album],
   );
+
+  const lightbox = lightboxIdx !== null ? visible[lightboxIdx] ?? null : null;
+
+  const closeLightbox = useCallback(() => setLightboxIdx(null), []);
+  const nextLightbox = useCallback(
+    () => setLightboxIdx((i) => (i === null ? null : (i + 1) % visible.length)),
+    [visible.length],
+  );
+  const prevLightbox = useCallback(
+    () =>
+      setLightboxIdx((i) =>
+        i === null ? null : (i - 1 + visible.length) % visible.length,
+      ),
+    [visible.length],
+  );
+
+  useEffect(() => {
+    if (lightboxIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowRight") nextLightbox();
+      else if (e.key === "ArrowLeft") prevLightbox();
+    };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [lightboxIdx, closeLightbox, nextLightbox, prevLightbox]);
 
   async function onUpload() {
     const file = fileRef.current?.files?.[0];
@@ -122,13 +153,13 @@ export function Photography() {
         )}
 
         <div className="photo-grid">
-          {visible.map((p) => (
+          {visible.map((p, i) => (
             <figure key={p.id} className="photo-cell">
               <img
-                src={p.url}
+                src={photoThumb(p)}
                 alt={p.caption || "photo"}
                 loading="lazy"
-                onClick={() => setLightbox(p)}
+                onClick={() => setLightboxIdx(i)}
               />
               <figcaption className="photo-cap">
                 <span className="photo-cap__text">
@@ -145,8 +176,60 @@ export function Photography() {
       </div>
 
       {lightbox && (
-        <div className="lightbox" onClick={() => setLightbox(null)}>
-          <img src={lightbox.url} alt={lightbox.caption || "photo"} />
+        <div
+          className="lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={lightbox.caption || "photo"}
+          onClick={closeLightbox}
+        >
+          <button
+            className="lightbox__btn lightbox__close"
+            aria-label="close"
+            onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
+          >
+            ×
+          </button>
+          {visible.length > 1 && (
+            <>
+              <button
+                className="lightbox__btn lightbox__prev"
+                aria-label="previous"
+                onClick={(e) => { e.stopPropagation(); prevLightbox(); }}
+              >
+                ‹
+              </button>
+              <button
+                className="lightbox__btn lightbox__next"
+                aria-label="next"
+                onClick={(e) => { e.stopPropagation(); nextLightbox(); }}
+              >
+                ›
+              </button>
+            </>
+          )}
+          <figure className="lightbox__figure" onClick={(e) => e.stopPropagation()}>
+            <img src={photoFull(lightbox)} alt={lightbox.caption || "photo"} />
+            <figcaption className="lightbox__cap">
+              {lightbox.caption && (
+                <span className="lightbox__caption-text">{lightbox.caption}</span>
+              )}
+              <span className="lightbox__meta mono">
+                <time>{formatDateTime(lightbox.created_at)}</time>
+                {visible.length > 1 && (
+                  <span> · {(lightboxIdx ?? 0) + 1} / {visible.length}</span>
+                )}
+                <a
+                  href={lightbox.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="lightbox__open"
+                >
+                  open original ↗
+                </a>
+              </span>
+            </figcaption>
+          </figure>
         </div>
       )}
     </main>

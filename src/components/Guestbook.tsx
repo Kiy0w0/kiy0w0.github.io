@@ -124,7 +124,19 @@ export function Guestbook() {
         </div>
 
         <div className="gb-right">
-          {loading && <p className="blog-muted">loading…</p>}
+          {loading && (
+            <div className="gb-skel" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="gb-skel__card">
+                  <div className="gb-skel__row gb-skel__row--head" />
+                  <div className="gb-skel__row gb-skel__row--w90" />
+                  <div className="gb-skel__row gb-skel__row--w70" />
+                  <div className="gb-skel__row gb-skel__row--w50" />
+                  <div className="gb-skel__foot" />
+                </div>
+              ))}
+            </div>
+          )}
           {!loading && entries.length === 0 && <p className="blog-muted">be the first to sign.</p>}
           {entries.map((en) => (
             <div key={en.id} className="gb-entry">
