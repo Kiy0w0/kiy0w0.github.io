@@ -63,6 +63,6 @@ export async function setOwnerReply(id: string, text: string): Promise<boolean> 
   const payload = trimmed
     ? { owner_reply: censor(trimmed), owner_reply_at: new Date().toISOString() }
     : { owner_reply: null, owner_reply_at: null };
-  const { error } = await gb.from("guestbook").update(payload).eq("id", id);
-  return !error;
+  const { data, error } = await gb.from("guestbook").update(payload).eq("id", id).select();
+  return !error && (data?.length ?? 0) > 0;
 }

@@ -45,3 +45,10 @@ create policy "guestbook public insert" on guestbook for insert
     char_length(name) between 1 and 40
     and char_length(message) between 1 and 280
   );
+
+alter table guestbook add column if not exists owner_reply text;
+alter table guestbook add column if not exists owner_reply_at timestamptz;
+
+drop policy if exists "guestbook owner update" on guestbook;
+create policy "guestbook owner update" on guestbook for update
+  to authenticated using (true) with check (true);
