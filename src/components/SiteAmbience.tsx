@@ -14,6 +14,10 @@ export function SiteAmbience() {
     if (audioRef.current) audioRef.current.volume = VOLUME;
   }, []);
 
+  useEffect(() => {
+    document.documentElement.classList.toggle("bg-video-on", bgVideo);
+  }, [bgVideo]);
+
   function toggle() {
     const a = audioRef.current;
     if (!a) return;
