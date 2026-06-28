@@ -49,11 +49,18 @@ create policy "guestbook public insert" on guestbook for insert
 alter table guestbook add column if not exists owner_reply text;
 alter table guestbook add column if not exists owner_reply_at timestamptz;
 
+create table if not exists guestbook_config (
+  k text primary key,
+  v text not null
+);
+alter table guestbook_config enable row level security;
+
 create or replace function set_owner_reply(entry_id uuid, reply text, secret text)
 returns boolean as $$
 declare
-  expected text := current_setting('app.owner_secret', true);
+  expected text;
 begin
+  select v into expected from guestbook_config where k = 'owner_secret';
   if expected is null or expected = '' or secret is distinct from expected then
     return false;
   end if;
