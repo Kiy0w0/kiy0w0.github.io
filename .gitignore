@@ -33,11 +33,6 @@ Thumbs.db
 .claude
 .impeccable
 
-todo.md
-harus.md
-HANDOFF.md
-.wrangler
-
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -50,3 +45,8 @@ pnpm-debug.log*
 .parcel-cache
 .eslintcache
 .history
+
+todo.md
+harus.md
+HANDOFF.md
+.wrangler

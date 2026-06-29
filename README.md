@@ -1,6 +1,6 @@
-# kiy0w0.github.io
+# kuromi.foo
 
-My personal site. The home page is a live Discord profile card, and on top of that there's a blog, a photography page, a Steam friends list, and a guestbook. Built with React, TypeScript and Vite, hosted on Cloudflare Pages.
+My personal site. The home page is a live Discord profile card, and on top of that there's a blog, a photography page, a portfolio, a Steam friends list, and a guestbook. Built with React, TypeScript and Vite, hosted on Cloudflare Pages. The blog also runs standalone at blog.kuromi.foo.
 
 The look started out from lostf1sh.github.io (minimal, dark) but I pushed it far enough that it's its own thing now. Violet instead of green, Sora for the headings, and a banner plus avatar card instead of the terminal layout.
 
@@ -8,7 +8,8 @@ The look started out from lostf1sh.github.io (minimal, dark) but I pushed it far
 
 - `/` is the Discord card. Avatar, banner and bio come from dcdn. Live status and Spotify come from Lanyard. Both are public APIs, so if one goes down the card still renders from the other. Want it pointed at your own account? Change `USER_ID` in src/lib/discord.ts. You'll need to join the Lanyard Discord first (https://github.com/Phineas/lanyard).
 - `/blog` is markdown posts, sorted into folders, each with an upload date and a draft or published flag. Published posts are public. Only I can write. Posts also get a per-page OG image, and there's an RSS feed at `/blog/rss.xml`.
-- `/photography` is a photo grid. Images get resized and re-encoded in the browser before upload, which also strips EXIF and GPS, so I'm not publishing the location my phone bakes into every shot.
+- `/photography` is a photo grid. Images get resized and re-encoded in the browser before upload, which also strips EXIF and GPS, so I'm not publishing the location my phone bakes into every shot. Stored on ImageKit.io, not Supabase, so storage and egress don't fill up.
+- `/portfolio` is a curated list of projects, backed by a Supabase table. Only I can add or edit; everyone reads.
 - `/friends` is a short, hand-picked list of Steam profiles with their online status.
 - The guestbook lives on the home page, below the card. Anyone can sign it. I can like and reply to entries.
 
@@ -29,8 +30,11 @@ You'll need a free Supabase project (two if you want the guestbook).
 VITE_SUPABASE_URL=...
 VITE_SUPABASE_ANON_KEY=...
 STEAM_API_KEY=...                       # only for /friends
-VITE_GUESTBOOK_SUPABASE_URL=...         # only for the guestbook
-VITE_GUESTBOOK_SUPABASE_ANON_KEY=...    # only for the guestbook
+GUESTBOOK_SUPABASE_URL=...              # only for the guestbook
+GUESTBOOK_SUPABASE_ANON_KEY=...         # only for the guestbook
+VITE_IMAGEKIT_PUBLIC_KEY=...            # photography + blog covers
+VITE_IMAGEKIT_URL_ENDPOINT=...
+IMAGEKIT_PRIVATE_KEY=...                # server only, never VITE_
 ```
 
 The anon key is meant to be public. It can only do what RLS lets it. Don't put the service_role key anywhere near the client.
@@ -38,6 +42,10 @@ The anon key is meant to be public. It can only do what RLS lets it. Don't put t
 ### Steam (skip if you don't want /friends)
 
 Grab a key from https://steamcommunity.com/dev/apikey. It's a secret, so it goes in STEAM_API_KEY (note: no VITE_ prefix) and is only ever read by the Steam proxy function, which runs on the server. The page calls `/api/steam`, never Steam directly, which also sidesteps the fact that Steam sends no CORS headers. Responses are cached at the CDN for about ten minutes so the API isn't hit on every visit. Online status only shows for friends whose Steam profile is public. Private ones read as offline.
+
+### ImageKit (photography and blog covers)
+
+Make a free account at imagekit.io. The public key and URL endpoint go in the VITE_ vars and ship to the client for uploads. The private key is server-only, read by the auth and delete functions (functions/api/imagekit-auth.js, imagekit-delete.js), and must never get a VITE_ prefix or it leaks. Older photos uploaded to Supabase Storage still render via a fallback, so no migration is needed.
 
 ## Develop
 
@@ -56,7 +64,9 @@ Works on either Cloudflare Pages or Vercel. The Steam proxy ships in both format
 
 ### Cloudflare Pages
 
-Create a Pages project from the repo. Build command `npm run build`, output directory `dist`. Add the env vars under Settings, then Environment variables. The VITE_ ones are needed at build time, STEAM_API_KEY at runtime for the function. SPA routing comes from public/_redirects, and the functions in functions/ are picked up as Pages Functions automatically. To test the functions locally, run `npx wrangler pages dev dist` after a build. Plain `npm run dev` won't run them.
+Create a Pages project from the repo. Build command `npm run build`, output directory `dist`. Add the env vars under Settings, then Environment variables. The VITE_ ones are needed at build time, STEAM_API_KEY and IMAGEKIT_PRIVATE_KEY at runtime for the functions. SPA routing comes from public/_redirects, and the functions in functions/ are picked up as Pages Functions automatically. To test the functions locally, run `npx wrangler pages dev dist` after a build. Plain `npm run dev` won't run them.
+
+For the standalone blog, add `blog.kuromi.foo` as a second custom domain on the same Pages project. The app detects a `blog.` host and renders the blog at `/` instead of the profile card, with posts at `/:slug`. No separate deploy.
 
 ### Vercel
 
