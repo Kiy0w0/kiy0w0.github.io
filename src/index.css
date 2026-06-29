@@ -197,6 +197,24 @@ body {
   color: var(--muted);
   font-size: 0.95rem;
   line-height: 1.5;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: tagline-in 0.5s ease 0.2s forwards;
+}
+
+@keyframes tagline-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tagline {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
 }
 
 .tech-strip {
@@ -328,6 +346,23 @@ body {
 }
 .home-status__item { white-space: nowrap; }
 
+.home-status__uptime {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.home-status__uptime:hover { color: var(--accent); }
+
+.home-status__uptime .num {
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
 .featured {
   margin-top: 1.5rem;
   width: 100%;
@@ -418,18 +453,37 @@ body {
 
 /* scroll cue */
 .scroll-cue {
-  position: absolute;
-  bottom: 2rem;
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.2rem;
   color: var(--muted);
   text-decoration: none;
+  opacity: 0.55;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.scroll-cue .cue-text {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.scroll-cue--hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(12px);
+  pointer-events: none;
 }
 
 .scroll-cue:hover {
   color: var(--accent);
+  opacity: 1;
 }
 
 .scroll-cue .chev {

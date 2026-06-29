@@ -59,11 +59,15 @@ export async function setOwnerLiked(id: string, liked: boolean): Promise<boolean
 }
 
 export async function setOwnerReply(id: string, text: string): Promise<boolean> {
-  const secret = import.meta.env.VITE_GUESTBOOK_OWNER_SECRET ?? "";
-  const { data, error } = await gb.rpc("set_owner_reply", {
-    entry_id: id,
-    reply: text.trim() || null,
-    secret,
-  });
-  return !error && data === true;
+  try {
+    const res = await fetch("/api/gb-reply", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ id, reply: text.trim() || null }),
+    });
+    const data = await res.json().catch(() => null);
+    return res.ok && data?.ok === true;
+  } catch {
+    return false;
+  }
 }

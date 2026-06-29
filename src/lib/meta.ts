@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SUFFIX = "kiy0w0";
+const SUFFIX = "Kuromi";
 
 function upsert(key: "name" | "property", id: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${key}="${id}"]`);

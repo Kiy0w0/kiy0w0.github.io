@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useMeta } from "../lib/meta";
 
 export function NotFound() {
-  useMeta({ title: "404 · kiy0w0" });
+  useMeta({ title: "404 · Kuromi" });
   return (
     <main className="page blog">
       <div className="blog-wrap notfound">

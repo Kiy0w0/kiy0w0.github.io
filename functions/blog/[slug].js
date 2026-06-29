@@ -29,7 +29,7 @@ export async function onRequest(context) {
   }
   if (!post) return res;
 
-  const title = `${post.title} · kiy0w0`;
+  const title = `${post.title} · Kuromi`;
   const desc = post.excerpt || "";
   const origin = new URL(context.request.url).origin;
   const image = post.cover_url || `${origin}/og/${encodeURIComponent(params.slug)}.png`;
@@ -43,9 +43,12 @@ export async function onRequest(context) {
         e.append(`<meta property="og:description" content="${esc(desc)}">`, { html: true });
         e.append(`<meta property="og:type" content="article">`, { html: true });
         e.append(`<meta property="og:url" content="${esc(context.request.url)}">`, { html: true });
+        e.append(`<meta name="twitter:title" content="${esc(title)}">`, { html: true });
+        e.append(`<meta name="twitter:description" content="${esc(desc)}">`, { html: true });
         if (image) {
           e.append(`<meta property="og:image" content="${esc(image)}">`, { html: true });
           e.append(`<meta name="twitter:card" content="summary_large_image">`, { html: true });
+          e.append(`<meta name="twitter:image" content="${esc(image)}">`, { html: true });
         }
       },
     })

@@ -1,6 +1,3 @@
-// Last.fm "last played" track via user.getRecentTracks.
-// Set LASTFM_USER to your own Last.fm username, otherwise the card is skipped.
-
 const API_KEY = "2a1469cd6f800fb3536cad1a7ab601ef";
 export const LASTFM_USER = "OvOliner";
 
@@ -31,7 +28,6 @@ export async function getLastTrack(): Promise<Track | null> {
     const t = data?.recenttracks?.track?.[0];
     if (!t) return null;
 
-    // Last.fm gives 4 sizes; last = extralarge.
     const images: any[] = t.image ?? [];
     const art = images[images.length - 1]?.["#text"] || null;
 

@@ -50,7 +50,7 @@ export function BlogPost() {
   }, [slug, isOwner]);
 
   useMeta({
-    title: post ? `${post.title} · kiy0w0` : "blog · kiy0w0",
+    title: post ? `${post.title} · Kuromi` : "blog · Kuromi",
     description: post?.excerpt,
     image: post?.cover_url || undefined,
   });

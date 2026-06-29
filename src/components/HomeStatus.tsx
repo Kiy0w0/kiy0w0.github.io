@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-// ganti ke tanggal mulai coding kamu (YYYY-MM-DD)
-const CODING_SINCE = new Date("2020-01-01T00:00:00");
+
+const CODING_SINCE = new Date("2020-05-02T00:00:00");
 
 // Bali (WITA). Open-Meteo, no API key.
 const WEATHER_URL =
@@ -28,26 +28,26 @@ const WMO: Record<number, string> = {
   99: "⛈️ thunderstorm",
 };
 
-function uptime(from: Date, now: number): string {
-  let s = Math.floor((now - from.getTime()) / 1000);
-  const y = Math.floor(s / 31536000);
-  s -= y * 31536000;
-  const d = Math.floor(s / 86400);
-  s -= d * 86400;
-  const h = Math.floor(s / 3600);
-  s -= h * 3600;
-  const m = Math.floor(s / 60);
-  s -= m * 60;
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${y}y ${d}d ${p(h)}:${p(m)}:${p(s)}`;
+const UNITS = [
+  { key: "yrs", div: 31536000000, dp: 8 },
+  { key: "days", div: 86400000, dp: 5 },
+  { key: "hrs", div: 3600000, dp: 4 },
+] as const;
+
+function uptime(from: Date, now: number, idx: number): string {
+  const u = UNITS[idx];
+  return (now - from.getTime()) / u.div < 0
+    ? "0"
+    : ((now - from.getTime()) / u.div).toFixed(u.dp);
 }
 
 export function HomeStatus() {
   const [now, setNow] = useState(() => Date.now());
+  const [unit, setUnit] = useState(0);
   const [weather, setWeather] = useState<{ temp: number; code: number } | null>(null);
 
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
+    const id = setInterval(() => setNow(Date.now()), 50);
     return () => clearInterval(id);
   }, []);
 
@@ -78,7 +78,14 @@ export function HomeStatus() {
 
   return (
     <div className="home-status mono">
-      <span className="home-status__item">{uptime(CODING_SINCE, now)}</span>
+      <button
+        type="button"
+        className="home-status__item home-status__uptime"
+        onClick={() => setUnit((u) => (u + 1) % UNITS.length)}
+        title="click to switch unit"
+      >
+        coding · <span className="num">{uptime(CODING_SINCE, now, unit)}</span> {UNITS[unit].key}
+      </button>
       <span className="home-status__item">bali · {baliTime} WITA</span>
       {weather && (
         <span className="home-status__item">

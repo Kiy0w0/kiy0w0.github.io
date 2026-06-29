@@ -2,10 +2,11 @@ import { useDiscord } from "../hooks/useDiscord";
 import { ProfileCard } from "../components/ProfileCard";
 import { useMeta } from "../lib/meta";
 import { Guestbook } from "../components/Guestbook";
+import { ScrollCue } from "../components/ScrollCue";
 
 export function Profile() {
   const { profile, loading, error, retry } = useDiscord();
-  useMeta({ title: "kiy0w0", description: "personal site — blog, photography, steam friends" });
+  useMeta({ title: "Kuromi", description: "personal site — blog, photography, steam friends" });
 
   return (
     <>
@@ -34,6 +35,7 @@ export function Profile() {
 
       {profile && <ProfileCard profile={profile} />}
     </main>
+    {profile && <ScrollCue />}
     <Guestbook />
     </>
   );
