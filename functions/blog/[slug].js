@@ -37,8 +37,11 @@ export async function onRequest(context) {
   return new HTMLRewriter()
     .on("title", { element: (e) => e.setInnerContent(title) })
     .on('meta[name="description"]', { element: (e) => e.setAttribute("content", desc) })
+    .on('meta[property^="og:"]', { element: (e) => e.remove() })
+    .on('meta[name^="twitter:"]', { element: (e) => e.remove() })
     .on("head", {
       element(e) {
+        e.append(`<meta property="og:site_name" content="Kuromi">`, { html: true });
         e.append(`<meta property="og:title" content="${esc(title)}">`, { html: true });
         e.append(`<meta property="og:description" content="${esc(desc)}">`, { html: true });
         e.append(`<meta property="og:type" content="article">`, { html: true });
