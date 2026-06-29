@@ -172,55 +172,6 @@ skip (perlu backend / berat):
 ## image storage — supabase bakal penuh (saran)
 masalah: Supabase free = 1GB storage + 5GB egress/bulan. Photography full-res + blog cover bakal cepat habis. Pilih salah satu, semua CF Pages friendly.
 
-rekomendasi (urut, top = paling murah/scalable):
-
-### 1. **Cloudflare R2** (TOP PICK — gratis 10GB, $0 egress) ⭐
-- 10GB storage gratis selamanya, **zero egress fee** (vs Supabase 5GB/mo egress limit)
-- Native ke CF Pages (sama account, no CORS pain)
-- S3-compatible API → pakai aws-sdk atau presigned URL upload
-- Custom domain `img.kiy0w0.dev` bisa, CDN built-in (Cloudflare edge)
-- Workflow: client minta presigned URL via CF Pages Function → upload langsung ke R2 → simpan public URL di Supabase row
-- Cost setelah 10GB: $0.015/GB/bulan storage, masih $0 egress
-- [ ] migrate photography upload → R2
-- [ ] migrate blog cover_url → R2
-- [ ] keep Supabase cuma buat metadata (row id, caption, album, R2 key)
-
-### 2. **imgix / Cloudinary free tier** (transform-on-fly)
-- Cloudinary: 25GB storage + 25GB bandwidth gratis, **auto-resize+webp+avif on URL params**
-- Pro: gak perlu pre-process di client, request `?w=400&q=auto` dapet thumbnail otomatis
-- Con: vendor lock-in, free tier suka di-throttle
-- Cocok kalo males pre-resize manual
-- [ ] eval Cloudinary free tier (cek limit terkini)
-
-### 3. **github raw + jsdelivr CDN** (gratis tak terbatas, hacky)
-- Push foto ke repo `kiy0w0/assets` (atau branch khusus), serve via `cdn.jsdelivr.net/gh/kiy0w0/assets@main/photo.jpg`
-- 100% gratis, CDN global, no egress fee
-- Con: workflow upload manual (git commit), repo ke-bloat (GitHub recommends < 1GB repo)
-- Cocok buat blog cover (jarang ganti), gak cocok photography (sering upload)
-- [ ] consider buat blog cover doang
-
-### 4. **client-side resize sebelum upload** (extend Supabase umur)
-- Pakai canvas API: resize max 1920px width + convert ke webp/jpeg quality 0.8 sebelum upload
-- Foto 4MB → 200-400KB, storage 10x lebih lama
-- Plus thumbnail 480px buat grid (lazy-load full-res cuma di lightbox)
-- Combine sama R2 buat solusi optimal
-- [ ] add client resize util `src/lib/imageOptim.ts` (canvas + webp encode)
-- [ ] generate 2 size: thumb (480w) + full (1920w max), simpan dua url
-
-### 5. **Bunny.net Storage** (cheap CDN, paid)
-- $0.01/GB storage, $0.005/GB egress (super murah)
-- Bukan free tier, tapi $1/bulan = 100GB. Affordable kalo nanti R2 limit kena
-- Skip dulu, opsi later
-
-skip (gak fit):
-- ~~AWS S3~~ (egress mahal, $0.09/GB)
-- ~~Firebase Storage~~ (egress mahal sama kayak S3)
-- ~~Vercel Blob~~ (kalo deploy di CF Pages, beda ekosistem)
-
-**plan konkret (rekomendasi):**
-1. **Sekarang**: tambah client resize+webp di upload (extend Supabase 10x lebih lama, cepet dikerjain)
-2. **Nanti** (kalo > 500MB di Supabase): migrate ke **R2** — keep Supabase row, ganti `url` ke R2 public URL
-3. Selalu pre-resize. Foto 4K asli → simpan archive di Google Drive/lokal, web pakai 1920w webp
 
 ## saran baru
 - [ ] guestbook owner reply — balas entry, nested di bawah pesan
@@ -287,3 +238,28 @@ accessibility & polish:
 - [x] tombol open original
 - [ ] count per album di chip (mis. "travel 12")
 - [ ] upload progress + drag-drop (owner)
+
+
+## kuromi / sanrio theme (domain kuromi.foo — vibe)
+identitas visual (pilih, jangan norak):
+- [ ] accent palette → kuromi: ungu gelap #2b1840 + pink #ff7eb6 + hitam. living accent ikut
+- [ ] cursor custom — kuromi/skull kecil (svg, fallback default)
+- [ ] favicon kuromi face + dynamic ikut discord status (rekuse ide dynamic favicon)
+- [ ] selection color pink, scrollbar ungu tipis
+- [ ] 404 page → kuromi pout art + "lost in the dark"
+- [ ] loading spinner skull/bow kecil ganti "loading…"
+- [ ] hover sfx — bow/skull samar di pojok kartu
+detail playful (ringan, css/svg only):
+- [ ] konami easter egg → kuromi rain (extend ide guestbook)
+- [ ] cmdk panick.gif → kuromi reaction
+- [ ] footer "made w/ 🖤 by luraph" + kuromi mini
+- [ ] guestbook avatar default → kuromi/sanrio random
+- [ ] secret /melody atau /mymelody — mode pink balik kuromi (theme swap easter egg)
+skip (norak/berat): glitter gif, midi autoplay, comic sans, animated bg sanrio penuh
+
+nama website ku kuromi.foo
+kemungkinan aku bakal ngebuat paste.kuromi.foo
+apa fungsinya:
+1. bisa membuat pastebin untuk pribadi atau untuk orang orang dan tanpa login, secara anonim
+2. bisa di buat 1x lihat  atau di settings berapa lama mau dihapus automatis max 2 minggu
+3. fitur 1x lihat bakal muncul popup, peringatan cuman bisa di lihat 1x saat pencet tombol oke akan muncul paste bin nya. namun pas orang itu refresh atau tutup pastebin akan hilang.

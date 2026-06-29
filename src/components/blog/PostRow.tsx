@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { formatDateTime, type Post } from "../../lib/blog";
+import { postPath } from "../../lib/host";
 
 export function PostRow({ post, folderName }: { post: Post; folderName?: string }) {
   return (
     <Link
-      to={`/blog/${post.slug}`}
+      to={postPath(post.slug)}
       className={"post-row" + (post.cover_url ? " post-row--cover" : "")}
     >
       {post.cover_url && (

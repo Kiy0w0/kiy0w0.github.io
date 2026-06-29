@@ -11,6 +11,7 @@ import {
 import { useAuth } from "../hooks/useAuth";
 import { MarkdownView } from "../components/blog/MarkdownView";
 import { useMeta } from "../lib/meta";
+import { writingPath } from "../lib/host";
 
 export function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -58,7 +59,7 @@ export function BlogPost() {
     if (!post) return;
     if (!confirm("Delete this post?")) return;
     await deletePost(post.id);
-    navigate("/blog");
+    navigate(writingPath);
   }
 
   if (state === "loading")
@@ -74,7 +75,7 @@ export function BlogPost() {
     return (
       <main className="page blog">
         <div className="blog-wrap">
-          <Link to="/blog" className="blog-back mono">← writing</Link>
+          <Link to={writingPath} className="blog-back mono">← writing</Link>
           <p className="blog-muted blog-state">post not found.</p>
         </div>
       </main>
@@ -83,7 +84,7 @@ export function BlogPost() {
   return (
     <main className="page blog">
       <article className="blog-wrap blog-article">
-        <Link to="/blog" className="blog-back mono">← writing</Link>
+        <Link to={writingPath} className="blog-back mono">← writing</Link>
         {post.cover_url && <img src={post.cover_url} alt="" className="post-cover" />}
         <h1 className="post-title">{post.title}</h1>
         <div className="post-meta mono">

@@ -13,7 +13,7 @@ const ITEMS: Item[] = [
   { label: "Home", to: "#top" },
   { label: "Blog", to: "/blog" },
   { label: "Photography", to: "/photography" },
-  { label: "Portfolio", to: "#details" },
+  { label: "Portfolio", to: "/portfolio" },
   { label: "Tools", to: "#details" },
   { label: "Friends", to: "/friends" },
 ];

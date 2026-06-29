@@ -4,6 +4,7 @@ import { listFolders, listPosts, type Folder, type Post } from "../lib/blog";
 import { useAuth } from "../hooks/useAuth";
 import { PostRow } from "../components/blog/PostRow";
 import { useMeta, titled } from "../lib/meta";
+import { isBlogHost, apexUrl } from "../lib/host";
 
 export function BlogList() {
   const { isOwner, signOut } = useAuth();
@@ -57,7 +58,7 @@ export function BlogList() {
     <main className="page blog">
       <div className="blog-wrap">
         <header className="blog-head">
-          {!open && <Link to="/" className="blog-back mono">← home</Link>}
+          {!open && (isBlogHost ? <a href={apexUrl} className="blog-back mono">← home</a> : <Link to="/" className="blog-back mono">← home</Link>)}
           <div className="blog-head__row">
             <h1 className="blog-title">
               {open && (
