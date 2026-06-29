@@ -7,6 +7,7 @@ import { CommandPalette } from "./CommandPalette";
 import { HomeStatus } from "./HomeStatus";
 import { HomeFeatured } from "./HomeFeatured";
 import { SocialRow } from "./SocialRow";
+import { TechStrip } from "./TechStrip";
 
 const TAGLINE = "self taught developer with various interests, currently exploring the world of web development and open source.";
 
@@ -201,6 +202,8 @@ export function ProfileCard({ profile }: { profile: Profile }) {
         <p className="tagline">{TAGLINE}</p>
 
         <SocialRow />
+
+        <TechStrip />
 
         {profile.customStatus && (
           <p className="custom-status">{profile.customStatus}</p>
