@@ -10,8 +10,23 @@ import {
 } from "../lib/blog";
 import { useAuth } from "../hooks/useAuth";
 import { MarkdownView } from "../components/blog/MarkdownView";
+import { Reactions } from "../components/blog/Reactions";
 import { useMeta } from "../lib/meta";
 import { writingPath } from "../lib/host";
+
+const VIEW_KEY = (slug: string) => `kuromi:viewed:${slug}`;
+function alreadyViewed(slug: string): boolean {
+  try {
+    return localStorage.getItem(VIEW_KEY(slug)) === "1";
+  } catch {
+    return false;
+  }
+}
+function markViewed(slug: string): void {
+  try {
+    localStorage.setItem(VIEW_KEY(slug), "1");
+  } catch {}
+}
 
 export function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -35,7 +50,8 @@ export function BlogPost() {
         setPost(p);
         setState("ready");
         setViews(p.views);
-        if (!isOwner) {
+        if (!isOwner && !alreadyViewed(p.slug)) {
+          markViewed(p.slug);
           incrementViews(p.slug).then((n) => alive && n != null && setViews(n));
         }
         if (p.folder_id) {
@@ -102,6 +118,7 @@ export function BlogPost() {
         )}
 
         <MarkdownView source={post.body} />
+        <Reactions slug={post.slug} />
       </article>
     </main>
   );

@@ -1184,3 +1184,75 @@ button:hover {
   }
   .cmdk-trigger .cmdk-label { white-space: normal; }
 }
+
+.reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.react-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.react-chip:hover {
+  border-color: var(--accent);
+}
+
+.react-chip--on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.react-chip--ghost {
+  opacity: 0.45;
+}
+
+.react-chip--ghost:hover {
+  opacity: 1;
+}
+
+.react-chip--add {
+  color: var(--muted);
+  padding: 0.3rem 0.7rem;
+}
+
+.react-emoji {
+  font-size: 1rem;
+}
+
+.react-count {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.react-chip--on .react-count {
+  color: var(--accent);
+}
+
+.react-input {
+  width: 5rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  outline: none;
+}
