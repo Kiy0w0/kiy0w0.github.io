@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { isFileHost } from "../lib/host";
 
 export function Login() {
   const { signIn } = useAuth();
@@ -20,7 +21,7 @@ export function Login() {
       setError(error.message);
       return;
     }
-    navigate("/blog", { replace: true });
+    navigate(isFileHost ? "/" : "/blog", { replace: true });
   }
 
   return (

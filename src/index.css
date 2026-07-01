@@ -1256,3 +1256,69 @@ button:hover {
   font-size: 0.9rem;
   outline: none;
 }
+
+.filehost-decoy {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+.filehost-decoy__vid {
+  max-width: min(90vw, 640px);
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+.filehost-decoy__text {
+  font-size: 1.4rem;
+  letter-spacing: 0.02em;
+  color: #e9e9f2;
+}
+.filehost-drop {
+  border: 1px dashed #3a3a4a;
+  border-radius: 10px;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  color: #9a9ab0;
+  transition: border-color 0.15s, color 0.15s;
+}
+.filehost-drop:hover,
+.filehost-drop--on {
+  border-color: #7a5cff;
+  color: #d8d8ea;
+}
+.filehost-copied {
+  color: #7ee081;
+  word-break: break-all;
+}
+.filehost-list {
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.filehost-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #262633;
+  border-radius: 8px;
+}
+.filehost-item__slug {
+  color: #c9c9dd;
+  text-decoration: none;
+}
+.filehost-item__slug:hover {
+  color: #fff;
+}
+.filehost-item__actions {
+  display: flex;
+  gap: 0.4rem;
+}

@@ -1,5 +1,9 @@
 export const isBlogHost = typeof window !== "undefined" && window.location.host.startsWith("blog.");
 
+export const isFileHost = typeof window !== "undefined" && window.location.host.startsWith("chaewon.");
+
+export const fileHostBase = typeof window !== "undefined" ? `${window.location.protocol}//${window.location.host}` : "https://chaewon.kuromi.foo";
+
 export const apexUrl = typeof window !== "undefined" ? `${window.location.protocol}//${window.location.host.replace(/^blog\./, "")}` : "/";
 
 export const blogUrl = typeof window !== "undefined" ? `${window.location.protocol}//blog.${window.location.host.replace(/^blog\./, "")}` : "https://blog.kuromi.foo";
