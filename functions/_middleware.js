@@ -18,6 +18,46 @@ const TYPES = {
   txt: "text/plain",
 };
 
+const BOT = /discordbot|twitterbot|slackbot|telegrambot|facebookexternalhit|whatsapp|linkedinbot|embedly|pinterest|redditbot|skypeuripreview|vkshare|googlebot|bingbot/i;
+
+const esc = (s) =>
+  String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+function kindOf(ct, ext) {
+  if ((ct || "").startsWith("image/") || ["jpg", "jpeg", "png", "webp", "gif", "ico", "bmp", "svg", "avif"].includes(ext)) return "image";
+  if ((ct || "").startsWith("video/") || ["mp4", "webm", "mov"].includes(ext)) return "video";
+  if ((ct || "").startsWith("audio/") || ["mp3", "ogg", "wav"].includes(ext)) return "audio";
+  return "other";
+}
+
+function embedHtml(url, kind, ct) {
+  const raw = `${url.origin}${url.pathname}?raw=1`;
+  const title = url.pathname.replace(/^\//, "");
+  const page = `${url.origin}${url.pathname}`;
+  const tags = [
+    `<meta property="og:site_name" content="chaewon.kuromi.foo">`,
+    `<meta property="og:title" content="${esc(title)}">`,
+    `<meta property="og:url" content="${esc(page)}">`,
+    `<meta name="theme-color" content="#7a5cff">`,
+  ];
+  if (kind === "video") {
+    tags.push(`<meta property="og:type" content="video.other">`);
+    tags.push(`<meta property="og:video" content="${esc(raw)}">`);
+    tags.push(`<meta property="og:video:secure_url" content="${esc(raw)}">`);
+    tags.push(`<meta property="og:video:type" content="${esc(ct)}">`);
+    tags.push(`<meta name="twitter:card" content="player">`);
+  } else if (kind === "audio") {
+    tags.push(`<meta property="og:type" content="music.song">`);
+    tags.push(`<meta property="og:audio" content="${esc(raw)}">`);
+  } else {
+    tags.push(`<meta property="og:type" content="website">`);
+    tags.push(`<meta property="og:image" content="${esc(raw)}">`);
+    tags.push(`<meta name="twitter:card" content="summary_large_image">`);
+    tags.push(`<meta name="twitter:image" content="${esc(raw)}">`);
+  }
+  return `<!doctype html><html><head><meta charset="utf-8">${tags.join("")}</head><body></body></html>`;
+}
+
 export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
@@ -48,14 +88,24 @@ export async function onRequest(context) {
   }
   if (!row) return next();
 
+  const ct = row.content_type || TYPES[ext] || "application/octet-stream";
+  const kind = kindOf(ct, ext);
+  const isRaw = url.searchParams.has("raw");
+  const ua = request.headers.get("user-agent") || "";
+
+  if (!isRaw && BOT.test(ua)) {
+    return new Response(embedHtml(url, kind, ct), {
+      headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=3600" },
+    });
+  }
+
   const upstream = await fetch(row.ik_url, {
     headers: request.headers.get("range") ? { range: request.headers.get("range") } : {},
   });
   if (!upstream.ok && upstream.status !== 206) return next();
 
-  const ct = row.content_type || TYPES[ext] || upstream.headers.get("content-type") || "application/octet-stream";
   const headers = new Headers();
-  headers.set("content-type", ct);
+  headers.set("content-type", ct || upstream.headers.get("content-type") || "application/octet-stream");
   headers.set("cache-control", "public, max-age=31536000, immutable");
   headers.set("access-control-allow-origin", "*");
   const len = upstream.headers.get("content-length");
