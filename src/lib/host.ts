@@ -2,6 +2,8 @@ export const isBlogHost = typeof window !== "undefined" && window.location.host.
 
 export const apexUrl = typeof window !== "undefined" ? `${window.location.protocol}//${window.location.host.replace(/^blog\./, "")}` : "/";
 
+export const blogUrl = typeof window !== "undefined" ? `${window.location.protocol}//blog.${window.location.host.replace(/^blog\./, "")}` : "https://blog.kuromi.foo";
+
 export const writingPath = isBlogHost ? "/" : "/blog";
 
-export const postPath = (slug: string) => (isBlogHost ? `/${slug}` : `/blog/${slug}`);
+export const postPath = (slug: string) => (isBlogHost ? `/${slug}` : `${blogUrl}/${slug}`);

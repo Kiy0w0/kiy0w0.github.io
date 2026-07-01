@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 import { formatDateTime, type Post } from "../../lib/blog";
-import { postPath } from "../../lib/host";
+import { postPath, isBlogHost } from "../../lib/host";
 
 export function PostRow({ post, folderName }: { post: Post; folderName?: string }) {
-  return (
-    <Link
-      to={postPath(post.slug)}
-      className={"post-row" + (post.cover_url ? " post-row--cover" : "")}
-    >
+  const href = postPath(post.slug);
+  const className = "post-row" + (post.cover_url ? " post-row--cover" : "");
+  const inner = (
+    <>
       {post.cover_url && (
         <img src={post.cover_url} alt="" className="post-row__cover" loading="lazy" />
       )}
@@ -23,6 +22,16 @@ export function PostRow({ post, folderName }: { post: Post; folderName?: string 
         {folderName ? ` · ${folderName}` : ""}
         {post.views > 0 ? ` · ${post.views} views` : ""}
       </time>
+    </>
+  );
+
+  return isBlogHost ? (
+    <Link to={href} className={className}>
+      {inner}
     </Link>
+  ) : (
+    <a href={href} className={className}>
+      {inner}
+    </a>
   );
 }

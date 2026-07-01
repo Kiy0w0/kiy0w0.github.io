@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import panick from "../panick.gif";
+import { blogUrl } from "../lib/host";
 
 // Small cmd+k navigation box. Toggle with Ctrl/Cmd+K or Ctrl+Enter, Esc to close.
 interface Item {
@@ -11,7 +12,7 @@ interface Item {
 
 const ITEMS: Item[] = [
   { label: "Home", to: "#top" },
-  { label: "Blog", to: "/blog" },
+  { label: "Blog", to: blogUrl },
   { label: "Photography", to: "/photography" },
   { label: "Portfolio", to: "/portfolio" },
   { label: "Tools", to: "#details" },
@@ -62,7 +63,7 @@ export function CommandPalette() {
     } else if (item.to.startsWith("#")) {
       document.querySelector(item.to)?.scrollIntoView({ behavior: "smooth" });
     } else {
-      window.open(item.to, "_blank");
+      window.location.href = item.to;
     }
   };
 

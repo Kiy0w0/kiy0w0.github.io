@@ -5,9 +5,19 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { SiteAmbience } from "./components/SiteAmbience";
 import { Profile } from "./pages/Profile";
 import { ProtectedRoute } from "./components/blog/ProtectedRoute";
-import { isBlogHost } from "./lib/host";
+import { isBlogHost, blogUrl } from "./lib/host";
 import "./index.css";
 import "./blog.css";
+
+function BlogRedirect({ path = "" }: { path?: string }) {
+  if (typeof window !== "undefined") window.location.replace(blogUrl + path);
+  return null;
+}
+
+function PostRedirect() {
+  const slug = window.location.pathname.replace(/^\/blog\//, "");
+  return <BlogRedirect path={"/" + slug} />;
+}
 
 const BlogList = lazy(() => import("./pages/BlogList").then((m) => ({ default: m.BlogList })));
 const BlogPost = lazy(() => import("./pages/BlogPost").then((m) => ({ default: m.BlogPost })));
@@ -27,10 +37,10 @@ createRoot(document.getElementById("root")!).render(
           <Routes>
             <Route path="/" element={isBlogHost ? <BlogList /> : <Profile />} />
             {isBlogHost && <Route path="/:slug" element={<BlogPost />} />}
-            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog" element={isBlogHost ? <BlogList /> : <BlogRedirect />} />
             <Route path="/blog/new" element={<ProtectedRoute><Editor /></ProtectedRoute>} />
             <Route path="/blog/edit/:id" element={<ProtectedRoute><Editor /></ProtectedRoute>} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/blog/:slug" element={isBlogHost ? <BlogPost /> : <PostRedirect />} />
             <Route path="/photography" element={<Photography />} />
             <Route path="/friends" element={<Friends />} />
             <Route path="/portfolio" element={<Portfolio />} />
