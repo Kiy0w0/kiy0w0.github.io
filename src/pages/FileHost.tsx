@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useMeta } from "../lib/meta";
-import { deleteFile, fileUrl, listFiles, uploadFile, type HostedFile } from "../lib/files";
+import { deleteFile, fileKind, fileUrl, listFiles, uploadFile, type HostedFile } from "../lib/files";
 
 const DECOY_VIDEO = "https://file.garden/ah6UIxtAklyoF-jt/sobi.mp4";
 
@@ -136,15 +136,22 @@ function Uploader() {
         <ul className="filehost-list">
           {files.map((f) => {
             const u = fileUrl(f);
+            const kind = fileKind(f);
             return (
-              <li key={f.slug} className="filehost-item">
-                <a href={u} target="_blank" rel="noreferrer" className="filehost-item__slug mono">
-                  {f.slug}
+              <li key={f.slug} className="filehost-card">
+                <a href={u} target="_blank" rel="noreferrer" className="filehost-card__preview">
+                  {kind === "image" && <img src={u} alt={f.slug} loading="lazy" />}
+                  {kind === "video" && <video src={u} muted loop playsInline preload="metadata" />}
+                  {kind === "audio" && <div className="filehost-card__icon mono">♪</div>}
+                  {kind === "other" && <div className="filehost-card__icon mono">file</div>}
                 </a>
-                <span className="filehost-item__actions">
-                  <button className="btn-sm" onClick={() => copy(u)}>copy</button>
-                  <button className="btn-sm" onClick={() => remove(f)}>del</button>
-                </span>
+                <div className="filehost-card__bar">
+                  <a href={u} target="_blank" rel="noreferrer" className="filehost-card__url mono">{u}</a>
+                  <span className="filehost-card__actions">
+                    <button className="btn-sm" onClick={() => copy(u)}>copy</button>
+                    <button className="btn-sm" onClick={() => remove(f)}>del</button>
+                  </span>
+                </div>
               </li>
             );
           })}

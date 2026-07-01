@@ -31,6 +31,15 @@ export function fileUrl(f: HostedFile): string {
   return `${fileHostBase}/${f.slug}.${ext}`;
 }
 
+export function fileKind(f: HostedFile): "image" | "video" | "audio" | "other" {
+  const ct = f.content_type || "";
+  const ext = extOf(f.ik_url);
+  if (ct.startsWith("image/") || ["jpg", "jpeg", "png", "webp", "gif", "ico", "bmp", "svg", "avif"].includes(ext)) return "image";
+  if (ct.startsWith("video/") || ["mp4", "webm", "mov"].includes(ext)) return "video";
+  if (ct.startsWith("audio/") || ["mp3", "ogg", "wav"].includes(ext)) return "audio";
+  return "other";
+}
+
 export async function listFiles(): Promise<HostedFile[]> {
   const { data, error } = await supabase
     .from("files")
