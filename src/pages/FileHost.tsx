@@ -7,10 +7,42 @@ const DECOY_VIDEO = "https://file.garden/ah6UIxtAklyoF-jt/sobi.mp4";
 
 function Decoy() {
   useMeta({ title: "chaewon", description: "Hello there! ! !" });
+  const vidRef = useRef<HTMLVideoElement>(null);
+  const [muted, setMuted] = useState(true);
+
+  useEffect(() => {
+    const v = vidRef.current;
+    if (!v) return;
+    const unmute = () => {
+      v.muted = false;
+      v.volume = 1;
+      v.play().catch(() => {});
+      setMuted(false);
+      window.removeEventListener("pointerdown", unmute);
+      window.removeEventListener("keydown", unmute);
+    };
+    window.addEventListener("pointerdown", unmute);
+    window.addEventListener("keydown", unmute);
+    return () => {
+      window.removeEventListener("pointerdown", unmute);
+      window.removeEventListener("keydown", unmute);
+    };
+  }, []);
+
   return (
     <main className="filehost-decoy">
-      <video src={DECOY_VIDEO} autoPlay loop muted playsInline className="filehost-decoy__vid" />
+      <video
+        ref={vidRef}
+        src={DECOY_VIDEO}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="filehost-decoy__bg"
+      />
+      <div className="filehost-decoy__scrim" />
       <p className="filehost-decoy__text mono">Hello there! ! !</p>
+      {muted && <span className="filehost-decoy__hint mono">click for sound</span>}
     </main>
   );
 }
